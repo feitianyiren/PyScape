@@ -38,7 +38,7 @@ def update_title():
 			return
 	a = len(par)
 	b = len([x for x in par if x.active])
-	master.title("%u of %u sources active (LMB=toggle; MMB=select/drag; RMB=solo)" % (b, a))
+	master.title("%u of %u sources active (LMB=select/drag; MMB=toggle on/off; RMB=solo)" % (b, a))
 
 f1 = Frame(master)
 f1.pack(side = LEFT)
@@ -161,12 +161,12 @@ class Source():
 		s.speed = 5
 		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill = "white", tags = "C%u" % n)
 		s.text = w.create_text(cx, cy, text = "%u" % n, tags = "T%u" % n)
-		w.tag_bind("C%u" % n, "<Button-1>", s.clicked)
-		w.tag_bind("T%u" % n, "<Button-1>", s.clicked)
-		w.tag_bind("C%u" % n, "<Button-2>", s.sel)
-		w.tag_bind("T%u" % n, "<Button-2>", s.sel)
-		w.tag_bind("C%u" % n, "<B2-Motion>", s.moved)
-		w.tag_bind("T%u" % n, "<B2-Motion>", s.moved)
+		w.tag_bind("C%u" % n, "<Button-2>", s.clicked)
+		w.tag_bind("T%u" % n, "<Button-2>", s.clicked)
+		w.tag_bind("C%u" % n, "<Button-1>", s.sel)
+		w.tag_bind("T%u" % n, "<Button-1>", s.sel)
+		w.tag_bind("C%u" % n, "<B1-Motion>", s.moved)
+		w.tag_bind("T%u" % n, "<B1-Motion>", s.moved)
 		w.tag_bind("C%u" % n, "<Button-3>", s.makesolo)
 		w.tag_bind("T%u" % n, "<Button-3>", s.makesolo)
 		s.update_color()
