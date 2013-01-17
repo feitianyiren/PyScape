@@ -31,7 +31,7 @@ fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
 def update_title():
 	a = len(par)
 	b = len([x for x in par if x.active])
-	master.title("%u of %u sources active (LMB=toggle; MMB=drag; RMB=edit)" % (b, a))
+	master.title("%u of %u sources active (LMB=toggle; MMB=drag; RMB=solo)" % (b, a))
 
 w = Canvas(master, width=pix[0], height=pix[1], bg="white")
 w.pack()
@@ -101,12 +101,15 @@ class Source():
 		s.n = n
 		s.fn = fn
 		s.active = active
+		s.solo = False
 		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill="white", tags="C%u" % n)
 		s.text = w.create_text(cx, cy, text = "%u" % n, tags="T%u" % n)
 		w.tag_bind("C%u" % n, "<Button-1>", s.clicked)
 		w.tag_bind("T%u" % n, "<Button-1>", s.clicked)
 		w.tag_bind("C%u" % n, "<B2-Motion>", s.moved)
 		w.tag_bind("T%u" % n, "<B2-Motion>", s.moved)
+		w.tag_bind("C%u" % n, "<Button-3>", s.makesolo)
+		w.tag_bind("T%u" % n, "<Button-3>", s.makesolo)
 		s.update_color()
 		s.x, s.y = cx, cy
 		s.source = contextlistener.get_source()
@@ -126,6 +129,21 @@ class Source():
 			s.source.play()
 		else:
 			s.source.stop()
+			
+	def makesolo(s, event = ""):
+		s.solo = not s.solo
+		if s.solo:
+			for p in par:
+				if p.n != s.n:
+					p.solo = False
+					p.source.stop()
+					p.update_color()
+			s.source.play()
+		else:
+			for p in par:
+				p.play_or_stop()
+				p.update_color()
+		s.update_color()	
 		
 	def moved(s, event = ""):
 		x, y = event.x, event.y
@@ -142,7 +160,10 @@ class Source():
 		s.source.gain = max(0, vol)
 		
 	def update_color(s):
-		if s.active:
+		if s.solo:
+			cc = "blue"
+			tc = "white"
+		elif s.active:
 			cc = "yellow"
 			tc = "black"
 		else:
