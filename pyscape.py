@@ -38,10 +38,26 @@ def update_title():
 			return
 	a = len(par)
 	b = len([x for x in par if x.active])
-	master.title("%u of %u sources active (LMB=toggle; MMB=drag; RMB=solo)" % (b, a))
+	master.title("%u of %u sources active (LMB=toggle; MMB=select/drag; RMB=solo)" % (b, a))
 
-w = Canvas(master, width=pix[0], height=pix[1], bg="white")
+f1 = Frame(master)
+f1.pack(side = LEFT)
+w = Canvas(f1, width=pix[0], height=pix[1], bg="white")
 w.pack()
+f2 = Frame(master)
+f2.pack(side = RIGHT)
+Label(f2, text = 50*' ').pack()
+lab = Label(f2, text = "(no selection)")
+lab.pack(side = TOP)
+
+do_ani = True
+def tog_ani():
+	for p in par:
+		if p.selected:
+			p.animated = not p.animated
+
+but_ani = Checkbutton(master, text = "Animate", command = tog_ani)
+but_ani.pack()
 
 def save_file():
 	mypath = asksaveasfilename()
@@ -49,6 +65,12 @@ def save_file():
 		wr = csv.writer(csvfile)
 		for p in par:
 			wr.writerow(p.getdata())
+
+def getcol(r, n, z = False):
+	try:
+		return r[n] == "True"
+	except:
+		return z
 			
 def load_file(mypath = None):
 	global par
@@ -68,18 +90,19 @@ def load_file(mypath = None):
 			wr = csv.reader(csvfile)
 			for row in wr:
 				act = (row[3] == 'True')
-				par.append(Source(int(row[0]), float(row[1]), float(row[2]), row[4], active = act))
+				par.append(Source(int(row[0]), float(row[1]), float(row[2]), row[4], active = act, animated = getcol(row, 5)))
 	except:
 		print "Cannot read file", mypath
 	start_act()
 	update_title()
 
-Button(master, text = "Save", command = save_file).pack(side = RIGHT)
-Button(master, text = "Load", command = load_file).pack(side = RIGHT)
+Button(f1, text = "Save", command = save_file).pack(side = RIGHT)
+Button(f1, text = "Load", command = load_file).pack(side = RIGHT)
 
 def start_act():
-	global stop_it
+	global stop_it, do_ani
 	stop_it = False
+	do_ani = True
 	but_on.config(state = DISABLED)
 	but_off.config(state = NORMAL)
 	for p in par:
@@ -88,30 +111,37 @@ def start_act():
 stop_it = False
 
 def stop_act():
-	global stop_it
+	global stop_it, do_ani
 	stop_it = True
+	do_ani = False
 	but_off.config(state = DISABLED)
 	but_on.config(state = NORMAL)
 	for p in par:
 		p.play_or_stop()
 
-but_on = Button(master, text = "Start", command = start_act, state = DISABLED)
-but_off = Button(master, text = "Stop", command = stop_act)
+but_on = Button(f1, text = "Start", command = start_act, state = DISABLED)
+but_off = Button(f1, text = "Stop", command = stop_act)
 
 but_on.pack(side = LEFT)
 but_off.pack(side = LEFT)
 
 class Source():
-	def __init__(s, n, x, y, fn, active = False):
+	def __init__(s, n, x, y, fn, active = False, animated = False):
 		cx, cy = x*pix[0], y*pix[1]
 		s.n = n
 		s.fn = fn
 		s.active = active
 		s.solo = False
-		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill="white", tags="C%u" % n)
-		s.text = w.create_text(cx, cy, text = "%u" % n, tags="T%u" % n)
+		s.selected = False
+		s.animated = animated
+		s.vx, s.vy = 0, 0
+		s.speed = 5
+		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill = "white", tags = "C%u" % n)
+		s.text = w.create_text(cx, cy, text = "%u" % n, tags = "T%u" % n)
 		w.tag_bind("C%u" % n, "<Button-1>", s.clicked)
 		w.tag_bind("T%u" % n, "<Button-1>", s.clicked)
+		w.tag_bind("C%u" % n, "<Button-2>", s.sel)
+		w.tag_bind("T%u" % n, "<Button-2>", s.sel)
 		w.tag_bind("C%u" % n, "<B2-Motion>", s.moved)
 		w.tag_bind("T%u" % n, "<B2-Motion>", s.moved)
 		w.tag_bind("C%u" % n, "<Button-3>", s.makesolo)
@@ -153,6 +183,9 @@ class Source():
 		
 	def moved(s, event = ""):
 		x, y = event.x, event.y
+		s.moveto(x, y)
+		
+	def moveto(s, x, y):
 		dx, dy = x-s.x, y-s.y
 		w.move("C%u" % s.n, dx, dy)
 		w.move("T%u" % s.n, dx, dy)
@@ -166,6 +199,24 @@ class Source():
 		y2 = math.cos(sx)
 		s.source.position = [x2, y2, 0]
 		s.source.gain = max(0, vol)
+		
+	def sel(s, event = ""):
+		for p in par:
+			p.selected = False
+		s.selected = True
+		if s.animated:
+			but_ani.select()
+		else:
+			but_ani.deselect()
+		lab.config(text = basename(s.fn))
+		for p in par:
+			p.update_sel()
+	
+	def update_sel(s):
+		if s.selected:
+			w.itemconfig("C%u" % s.n, width = 3, outline = "turquoise")
+		else:
+			w.itemconfig("C%u" % s.n, width = 1, outline = "black")
 		
 	def update_color(s):
 		if s.solo:
@@ -182,16 +233,44 @@ class Source():
 		update_title()
 
 	def getdata(s):
-		return [s.n, 1.*s.x/pix[0], 1.*s.y/pix[1], s.active, s.fn]
+		return [s.n, 1.*s.x/pix[0], 1.*s.y/pix[1], s.active, s.fn, s.animated]
 
 if len(sys.argv) > 1:
-	print "loading", sys.argv[1]
+	print "Loading", sys.argv[1]
 	load_file(mypath = sys.argv[1])
 else:		
 	for i in range(len(fn)):
 		par.append(Source(i+1, r()*.8+.1, r()*.8+.1, os.path.join(wpath, fn[i])))
 
 update_title()
+
+def move_ani():
+	for p in par:
+		if p.animated and do_ani:
+			p.vx += (r()-.5)*p.speed
+			p.vy += (r()-.5)*p.speed
+			p.moveto(p.x+p.vx, p.y+p.vy)
+			if p.x > pix[0]:
+				p.vx = -abs(p.vx)
+			if p.y > pix[1]:
+				p.vy = -abs(p.vy)
+			if p.x < 0:
+				p.vx = abs(p.vx)
+			if p.y < 0:
+				p.vy = abs(p.vy)
+			sp = (p.vx**2 + p.vy**2)
+			if sp > p.speed**2:
+				p.vx *= .5
+				p.vy *= .5
+			for q in par:
+				if q.animated:
+					dist = (q.x-p.x)**2+(q.y-p.y)**2
+					if dist > 1:
+						p.vx += (p.x-q.x)/dist
+						p.vy += (p.y-q.y)/dist
+	master.after(50, move_ani)
+
+master.after(50, move_ani)
 
 mainloop()
 
