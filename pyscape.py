@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 
 from Tkinter import *
 from tkFileDialog import *
-import os, random, math, csv
+import os, sys, random, math, csv
 from random import random as r
 
 import openal
@@ -27,6 +27,7 @@ pix = 800, 600
 cr = 20
 wpath = "/home/martin/.boodler/Collection/com.azulebanana.buddhamachine/1.5.1/mono"
 fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
+par = []
 
 def update_title():
 	a = len(par)
@@ -43,7 +44,7 @@ def save_file():
 		for p in par:
 			wr.writerow(p.getdata())
 			
-def load_file():
+def load_file(mypath = None):
 	global par
 
 	for p in par:
@@ -54,7 +55,8 @@ def load_file():
 		w.delete("T%u" % n)
 	par = []
 	update_title()
-	mypath = askopenfilename()
+	if not mypath:
+		mypath = askopenfilename()
 	try:
 		with open(mypath, 'rb') as csvfile:
 			wr = csv.reader(csvfile)
@@ -63,7 +65,7 @@ def load_file():
 				par.append(Source(int(row[0]), float(row[1]), float(row[2]), row[4], active = act))
 	except:
 		print "Cannot read file", mypath
-	stop_act()
+	start_act()
 	update_title()
 
 Button(master, text = "Save", command = save_file).pack(side = RIGHT)
@@ -92,8 +94,6 @@ but_off = Button(master, text = "Stop", command = stop_act)
 
 but_on.pack(side = LEFT)
 but_off.pack(side = LEFT)
-
-par = []
 
 class Source():
 	def __init__(s, n, x, y, fn, active = False):
@@ -177,10 +177,13 @@ class Source():
 
 	def getdata(s):
 		return [s.n, 1.*s.x/pix[0], 1.*s.y/pix[1], s.active, s.fn]
-		
-for i in range(1, 8):
-	f = random.choice(fn)
-	par.append(Source(i, r()*.9, r()*.9, os.path.join(wpath, f)))
+
+if len(sys.argv) > 1:
+	print "loading", sys.argv[1]
+	load_file(mypath = sys.argv[1])
+else:		
+	for i in range(len(fn)):
+		par.append(Source(i+1, r()*.9, r()*.9, os.path.join(wpath, fn[i])))
 
 update_title()
 
