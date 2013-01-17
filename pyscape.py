@@ -53,6 +53,7 @@ def load_file():
 		w.delete("C%u" % n)
 		w.delete("T%u" % n)
 	par = []
+	update_title()
 	mypath = askopenfilename()
 	try:
 		with open(mypath, 'rb') as csvfile:
@@ -63,6 +64,7 @@ def load_file():
 	except:
 		print "Cannot read file", mypath
 	stop_act()
+	update_title()
 
 Button(master, text = "Save", command = save_file).pack(side = RIGHT)
 Button(master, text = "Load", command = load_file).pack(side = RIGHT)
