@@ -12,6 +12,7 @@ from Tkinter import *
 from tkFileDialog import *
 import os, sys, random, math, csv
 from random import random as r
+from os.path import basename
 
 import openal
 
@@ -27,9 +28,14 @@ pix = 800, 600
 cr = 20
 wpath = "/home/martin/.boodler/Collection/com.azulebanana.buddhamachine/1.5.1/mono"
 fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
+fn.sort()
 par = []
 
 def update_title():
+	for p in par:
+		if p.solo:
+			master.title("Playing %s; use RMB to quit solo mode" % basename(p.fn))
+			return
 	a = len(par)
 	b = len([x for x in par if x.active])
 	master.title("%u of %u sources active (LMB=toggle; MMB=drag; RMB=solo)" % (b, a))
@@ -183,7 +189,7 @@ if len(sys.argv) > 1:
 	load_file(mypath = sys.argv[1])
 else:		
 	for i in range(len(fn)):
-		par.append(Source(i+1, r()*.9, r()*.9, os.path.join(wpath, fn[i])))
+		par.append(Source(i+1, r()*.8+.1, r()*.8+.1, os.path.join(wpath, fn[i])))
 
 update_title()
 
