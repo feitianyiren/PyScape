@@ -115,7 +115,7 @@ class Source():
 		s.source = contextlistener.get_source()
 		s.source.buffer = openal.Buffer(fn)
 		s.source.looping = True
-		s.source.gain = 1.
+		s.update_parameters()
 
 	def clicked(s, event = ""):
 		w.tag_raise("C%u" % s.n)
@@ -151,9 +151,11 @@ class Source():
 		w.move("C%u" % s.n, dx, dy)
 		w.move("T%u" % s.n, dx, dy)
 		s.x, s.y = x, y
+		s.update_parameters()
+		
+	def update_parameters(s):
 		sx = (math.pi*s.x/pix[0])-math.pi/2
 		vol = 3.*(1.-(1.*s.y/pix[1]))**2
-		#print s.source.position, vol
 		x2 = math.sin(sx)
 		y2 = math.cos(sx)
 		s.source.position = [x2, y2, 0]
