@@ -1,0 +1,12 @@
+A simple Python soundscape creation tool
+========================================
+
+* Defaults to the Boodler (http://boodler.org/) Buddha machine loops, but you can change that in the source ("wpath").
+
+* WAV files need to be mono (or panning will not work). Convert them with stereo2mono.sh. (The BM loops are also stereo, so you need to convert them first.)
+
+* Inspired by http://www.interactivesoundscapes.org/software.html
+
+* No edit functionality yet
+
+Requires the openal and alut libraries to be installed.
