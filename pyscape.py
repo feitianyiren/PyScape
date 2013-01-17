@@ -44,11 +44,34 @@ f1 = Frame(master)
 f1.pack(side = LEFT)
 w = Canvas(f1, width=pix[0], height=pix[1], bg="white")
 w.pack()
+
 f2 = Frame(master)
 f2.pack(side = RIGHT)
-Label(f2, text = 50*' ').pack()
-lab = Label(f2, text = "(no selection)")
-lab.pack(side = TOP)
+gitem = LabelFrame(f2, text="Selected item", padx=5, pady=5)
+gitem.pack(side = TOP, padx=10, pady=10)
+Label(gitem, text = 50*' ').pack()
+lab = Entry(gitem)
+lab.pack(side = TOP, pady=30)
+lab.delete(0, END)
+lab.insert(0, "(no selection)")
+
+def tog_act():
+	for p in par:
+		if p.selected:
+			p.active = not p.active
+			p.play_or_stop()
+			p.update_color()
+
+but_act = Checkbutton(gitem, text = "Active", command = tog_act)
+but_act.pack(pady=20)
+
+def tog_sol():
+	for p in par:
+		if p.selected:
+			p.makesolo()
+
+but_sol = Checkbutton(gitem, text = "Solo", command = tog_sol)
+but_sol.pack(pady=20)
 
 do_ani = True
 def tog_ani():
@@ -56,8 +79,8 @@ def tog_ani():
 		if p.selected:
 			p.animated = not p.animated
 
-but_ani = Checkbutton(master, text = "Animate", command = tog_ani)
-but_ani.pack()
+but_ani = Checkbutton(gitem, text = "Animate", command = tog_ani)
+but_ani.pack(pady=20)
 
 def save_file():
 	mypath = asksaveasfilename()
@@ -157,6 +180,10 @@ class Source():
 		w.tag_raise("C%u" % s.n)
 		w.tag_raise("T%u" % s.n)
 		s.active = not s.active
+		if s.active:
+			but_act.select()
+		else:
+			but_act.deselect()
 		s.update_color()
 		s.play_or_stop()
 		
@@ -168,6 +195,10 @@ class Source():
 			
 	def makesolo(s, event = ""):
 		s.solo = not s.solo
+		if s.solo and s.selected:
+			but_sol.select()
+		else:
+			but_sol.deselect()
 		if s.solo:
 			for p in par:
 				if p.n != s.n:
@@ -204,11 +235,20 @@ class Source():
 		for p in par:
 			p.selected = False
 		s.selected = True
+		if s.active:
+			but_act.select()
+		else:
+			but_act.deselect()
+		if s.solo:
+			but_sol.select()
+		else:
+			but_sol.deselect()
 		if s.animated:
 			but_ani.select()
 		else:
 			but_ani.deselect()
-		lab.config(text = basename(s.fn))
+		lab.delete(0, END)
+		lab.insert(0, basename(s.fn))
 		for p in par:
 			p.update_sel()
 	
