@@ -27,7 +27,7 @@ master = Tk()
 
 pix = 800, 600
 cr = 20
-wpath = "/home/martin/.boodler/Collection/com.azulebanana.buddhamachine/1.5.1/mono"
+wpath = "sounds/fm3"
 if not os.path.isdir(wpath):
 	print "WAV sample directory %s not found!" % wpath
 	print "Please change the variable wpath to point to a directory"
