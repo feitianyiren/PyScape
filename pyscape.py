@@ -144,8 +144,18 @@ def load_file(mypath = None):
 	start_act()
 	update_title()
 
+def sort_all():
+	xp, yp = 2*cr, 2*cr
+	for p in par:
+		p.moveto(xp, yp)
+		xp += 3*cr
+		if xp > pix[0] - 2*cr:
+			xp = 2*cr
+			yp += 3*cr
+
 Button(f1, text = "Save", command = save_file).pack(side = RIGHT)
 Button(f1, text = "Load", command = load_file).pack(side = RIGHT)
+Button(f1, text = "Sort", command = sort_all).pack(side = RIGHT)
 
 def start_act():
 	global stop_it, do_ani
