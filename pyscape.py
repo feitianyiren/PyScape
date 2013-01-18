@@ -17,6 +17,8 @@ from time import time
 
 import openal
 
+random.seed()
+
 device = openal.Device()
 contextlistener = device.ContextListener()
 contextlistener.position = 0, 0, 0
@@ -106,6 +108,8 @@ but_modamp.grid(row=1, pady=10, sticky=W)
 def save_file():
 	"Save as preset"
 	mypath = asksaveasfilename()
+	if not len(mypath):
+		return
 	with open(mypath, 'wb') as csvfile:
 		wr = csv.writer(csvfile)
 		for p in par:
@@ -139,6 +143,8 @@ def load_file(mypath = None):
 	update_title()
 	if not mypath:
 		mypath = askopenfilename()
+		if not len(mypath):
+			return
 	try:
 		with open(mypath, 'rb') as csvfile:
 			wr = csv.reader(csvfile)
@@ -163,9 +169,36 @@ def sort_all():
 			xp = 2*cr
 			yp += 3*cr
 
+def load_dir(mypath = None):
+	"Open directory with sound files"
+	global par, wpath
+
+	for p in par:
+		n = p.n
+		p.active = False
+		p.play_or_stop()
+		w.delete("C%u" % n)
+		w.delete("T%u" % n)
+	par = []
+	update_title()
+	if not mypath:
+		mypath = askdirectory(initialdir = wpath)
+		if not len(mypath):
+			return
+	fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
+	fn.sort()
+	for n,f in enumerate(fn):
+		par.append(Source(
+		n, 20, 20, os.path.join(mypath, f)
+		))
+	sort_all()
+	update_title()
+	wpath = mypath
+
 Button(f1, text = "Save", command = save_file).pack(side = RIGHT)
 Button(f1, text = "Load", command = load_file).pack(side = RIGHT)
 Button(f1, text = "Sort", command = sort_all).pack(side = RIGHT)
+Button(f1, text = "Load sounds", command = load_dir).pack(side = RIGHT)
 
 def start_act():
 	"Start performance"
@@ -354,6 +387,8 @@ else:
 		for j in random.choice(demos):
 			par[j-1].clicked()
 			par[j-1].animated = True
+			if r() < .25:
+				par[j-1].mod_amp = True
 
 par[0].sel()
 update_title()
