@@ -13,6 +13,7 @@ from tkFileDialog import *
 import os, sys, random, math, csv
 from random import random as r
 from os.path import basename
+from time import time
 
 import openal
 
@@ -89,6 +90,14 @@ def tog_ani():
 but_ani = Checkbutton(titem, text = "Animate", command = tog_ani)
 but_ani.grid(row=0, pady=10, sticky=W)
 
+def tog_modamp():
+	for p in par:
+		if p.selected:
+			p.mod_amp = not p.mod_amp
+
+but_modamp = Checkbutton(titem, text = "Modulate amplitude", command = tog_modamp)
+but_modamp.grid(row=1, pady=10, sticky=W)
+
 def save_file():
 	mypath = asksaveasfilename()
 	with open(mypath, 'wb') as csvfile:
@@ -99,6 +108,12 @@ def save_file():
 def getcol(r, n, z = False):
 	try:
 		return r[n] == "True"
+	except:
+		return z
+
+def getcol_float(r, n, z = 0.):
+	try:
+		return float(r[n])
 	except:
 		return z
 			
@@ -120,7 +135,10 @@ def load_file(mypath = None):
 			wr = csv.reader(csvfile)
 			for row in wr:
 				act = (row[3] == 'True')
-				par.append(Source(int(row[0]), float(row[1]), float(row[2]), row[4], active = act, animated = getcol(row, 5)))
+				par.append(Source(
+				int(row[0]), float(row[1]), float(row[2]), row[4], active = act,
+				animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7)
+				))
 	except:
 		print "Cannot read file", mypath
 	start_act()
@@ -156,7 +174,7 @@ but_on.pack(side = LEFT)
 but_off.pack(side = LEFT)
 
 class Source():
-	def __init__(s, n, x, y, fn, active = False, animated = False):
+	def __init__(s, n, x, y, fn, active = False, animated = False, mod_amp = False, offset = None):
 		cx, cy = x*pix[0], y*pix[1]
 		s.n = n
 		s.fn = fn
@@ -166,6 +184,11 @@ class Source():
 		s.animated = animated
 		s.vx, s.vy = 0, 0
 		s.speed = 5
+		s.mod_amp = mod_amp
+		if offset == None or offset == 0.:
+			s.offset = r()*30.
+		else:
+			s.offset = offset
 		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill = "white", tags = "C%u" % n)
 		s.text = w.create_text(cx, cy, text = "%u" % n, tags = "T%u" % n)
 		w.tag_bind("C%u" % n, "<Button-2>", s.clicked)
@@ -236,7 +259,7 @@ class Source():
 		x2 = math.sin(sx)
 		y2 = math.cos(sx)
 		s.source.position = [x2, y2, 0]
-		s.source.gain = max(0, vol)
+		s.gain_pure = max(0, vol)
 		
 	def sel(s, event = ""):
 		for p in par:
@@ -254,6 +277,10 @@ class Source():
 			but_ani.select()
 		else:
 			but_ani.deselect()
+		if s.mod_amp:
+			but_modamp.select()
+		else:
+			but_modamp.deselect()
 		lab.delete(0, END)
 		lab.insert(0, basename(s.fn))
 		for p in par:
@@ -280,7 +307,7 @@ class Source():
 		update_title()
 
 	def getdata(s):
-		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated]
+		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated, s.mod_amp, "%.3f" % s.offset]
 
 demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
 
@@ -298,8 +325,12 @@ else:
 par[0].sel()
 update_title()
 
-def move_ani():
+def update_all():
 	for p in par:
+		if p.mod_amp:
+			p.source.gain = .5*(1+math.sin(time()/2-p.offset)) * p.gain_pure
+		else:
+			p.source.gain = p.gain_pure
 		if p.animated and do_ani:
 			p.vx += (r()-.5)*p.speed
 			p.vy += (r()-.5)*p.speed
@@ -322,9 +353,9 @@ def move_ani():
 					if dist > 1:
 						p.vx += (p.x-q.x)/dist
 						p.vy += (p.y-q.y)/dist
-	master.after(50, move_ani)
+	master.after(50, update_all)
 
-master.after(50, move_ani)
+master.after(50, update_all)
 
 mainloop()
 
