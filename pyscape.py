@@ -6,6 +6,11 @@ PyScape
 A soundscape generation tool in Python
 
 The sound files need to be mono, otherwise panning won't work!
+
+Martin C. Doege
+<mdoege@compuserve.com>
+
+2013-01-18
 """
 
 from Tkinter import *
