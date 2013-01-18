@@ -29,7 +29,8 @@ master = Tk()
 
 pix = 800, 600		# canvas size
 cr = 20			# circle size
-wpath = "sounds/fm3"
+ps_ext = '.pyscape'	# file extension for presets
+wpath = "sounds/fm3"	# inital path to WAV files
 if not os.path.isdir(wpath):
 	print "WAV sample directory %s not found!" % wpath
 	print "Please change the variable wpath to point to a directory"
@@ -120,7 +121,7 @@ but_trig.grid(row=2, pady=10, sticky=W)
 
 def save_file():
 	"Save as preset"
-	mypath = asksaveasfilename()
+	mypath = asksaveasfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")], defaultextension = ps_ext)
 	if not len(mypath):
 		return
 	with open(mypath, 'wb') as csvfile:
@@ -155,7 +156,7 @@ def load_file(mypath = None):
 	par = []
 	update_title()
 	if not mypath:
-		mypath = askopenfilename()
+		mypath = askopenfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")])
 		if not len(mypath):
 			return
 	try:
