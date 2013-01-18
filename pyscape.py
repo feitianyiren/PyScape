@@ -142,8 +142,8 @@ def stop_act():
 	for p in par:
 		p.play_or_stop()
 
-but_on = Button(f1, text = "Start", command = start_act, state = DISABLED)
-but_off = Button(f1, text = "Stop", command = stop_act)
+but_on = Button(f1, text = "Play", command = start_act, state = DISABLED)
+but_off = Button(f1, text = "Pause", command = stop_act)
 
 but_on.pack(side = LEFT)
 but_off.pack(side = LEFT)
@@ -281,6 +281,10 @@ if len(sys.argv) > 1:
 else:		
 	for i in range(len(fn)):
 		par.append(Source(i+1, r()*.8+.1, r()*.8+.1, os.path.join(wpath, fn[i])))
+	if len(par) > 16:
+		for j in 10, 11, 13, 14, 15, 16:
+			par[j-1].clicked()
+			par[j-1].animated = True
 
 update_title()
 
