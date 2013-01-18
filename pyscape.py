@@ -275,6 +275,8 @@ class Source():
 	def getdata(s):
 		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated]
 
+demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
+
 if len(sys.argv) > 1:
 	print "Loading", sys.argv[1]
 	load_file(mypath = sys.argv[1])
@@ -282,7 +284,7 @@ else:
 	for i in range(len(fn)):
 		par.append(Source(i+1, r()*.8+.1, r()*.8+.1, os.path.join(wpath, fn[i])))
 	if len(par) > 16:
-		for j in 10, 11, 13, 14, 15, 16:
+		for j in random.choice(demos):
 			par[j-1].clicked()
 			par[j-1].animated = True
 
