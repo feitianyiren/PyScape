@@ -273,7 +273,7 @@ class Source():
 		update_title()
 
 	def getdata(s):
-		return [s.n, 1.*s.x/pix[0], 1.*s.y/pix[1], s.active, s.fn, s.animated]
+		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated]
 
 if len(sys.argv) > 1:
 	print "Loading", sys.argv[1]
