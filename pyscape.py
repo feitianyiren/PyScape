@@ -27,6 +27,11 @@ master = Tk()
 pix = 800, 600
 cr = 20
 wpath = "/home/martin/.boodler/Collection/com.azulebanana.buddhamachine/1.5.1/mono"
+if not os.path.isdir(wpath):
+	print "WAV sample directory %s not found!" % wpath
+	print "Please change the variable wpath to point to a directory"
+	print "with 20 or so suitable mono WAV files."
+	sys.exit(1)
 fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
 fn.sort()
 par = []
