@@ -170,7 +170,9 @@ def load_file(mypath = None):
 				))
 	except:
 		print "Cannot read file", mypath
+		return
 	start_act()
+	par[0].sel()
 	update_title()
 
 def sort_all():
@@ -206,6 +208,7 @@ def load_dir(mypath = None):
 		n+1, 20, 20, os.path.join(mypath, f)
 		))
 	sort_all()
+	par[0].sel()
 	update_title()
 	wpath = mypath
 
