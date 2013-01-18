@@ -419,7 +419,7 @@ def update_all():
 			is_solo = True
 	for p in par:
 		if p.mod_amp:
-			p.source.gain = .5*(1+math.sin(time()/2-p.offset)) * p.gain_pure
+			p.source.gain = p.gain_pure * (.5+.25*(1+math.sin(time()/2-p.offset)))**2
 		else:
 			p.source.gain = p.gain_pure
 		if not p.source.looping and p.active:
