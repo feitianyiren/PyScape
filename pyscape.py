@@ -25,8 +25,8 @@ contextlistener.orientation = 0, 1, 0, 0, 0, 1
 
 master = Tk()
 
-pix = 800, 600
-cr = 20
+pix = 800, 600		# canvas size
+cr = 20			# circle size
 wpath = "sounds/fm3"
 if not os.path.isdir(wpath):
 	print "WAV sample directory %s not found!" % wpath
@@ -38,6 +38,7 @@ fn.sort()
 par = []
 
 def update_title():
+	"Update window title"
 	for p in par:
 		if p.solo:
 			master.title("Playing %s; use RMB to quit solo mode" % basename(p.fn))
@@ -64,6 +65,7 @@ lab.delete(0, END)
 lab.insert(0, "(no selection)")
 
 def tog_act():
+	"Toggle sound active flag"
 	for p in par:
 		if p.selected:
 			p.active = not p.active
@@ -74,6 +76,7 @@ but_act = Checkbutton(gitem, text = "Active", command = tog_act)
 but_act.grid(row=1, pady=10, sticky=W)
 
 def tog_sol():
+	"Toggle sound solo flag"
 	for p in par:
 		if p.selected:
 			p.makesolo()
@@ -83,6 +86,7 @@ but_sol.grid(row=2, pady=10, sticky=W)
 
 do_ani = True
 def tog_ani():
+	"Toggle sound animated flag"
 	for p in par:
 		if p.selected:
 			p.animated = not p.animated
@@ -91,6 +95,7 @@ but_ani = Checkbutton(titem, text = "Animate", command = tog_ani)
 but_ani.grid(row=0, pady=10, sticky=W)
 
 def tog_modamp():
+	"Toggle sound amplitude modulation flag"
 	for p in par:
 		if p.selected:
 			p.mod_amp = not p.mod_amp
@@ -99,6 +104,7 @@ but_modamp = Checkbutton(titem, text = "Modulate amplitude", command = tog_modam
 but_modamp.grid(row=1, pady=10, sticky=W)
 
 def save_file():
+	"Save as preset"
 	mypath = asksaveasfilename()
 	with open(mypath, 'wb') as csvfile:
 		wr = csv.writer(csvfile)
@@ -106,18 +112,21 @@ def save_file():
 			wr.writerow(p.getdata())
 
 def getcol(r, n, z = False):
+	"Attempt to read boolean from file"
 	try:
 		return r[n] == "True"
 	except:
 		return z
 
 def getcol_float(r, n, z = 0.):
+	"Attempt to read float from file"
 	try:
 		return float(r[n])
 	except:
 		return z
 			
 def load_file(mypath = None):
+	"Load preset"
 	global par
 
 	for p in par:
@@ -145,6 +154,7 @@ def load_file(mypath = None):
 	update_title()
 
 def sort_all():
+	"Sort sources by number"
 	xp, yp = 2*cr, 2*cr
 	for p in par:
 		p.moveto(xp, yp)
@@ -158,6 +168,7 @@ Button(f1, text = "Load", command = load_file).pack(side = RIGHT)
 Button(f1, text = "Sort", command = sort_all).pack(side = RIGHT)
 
 def start_act():
+	"Start performance"
 	global stop_it, do_ani
 	stop_it = False
 	do_ani = True
@@ -169,6 +180,7 @@ def start_act():
 stop_it = False
 
 def stop_act():
+	"Pause performance"
 	global stop_it, do_ani
 	stop_it = True
 	do_ani = False
@@ -184,6 +196,7 @@ but_on.pack(side = LEFT)
 but_off.pack(side = LEFT)
 
 class Source():
+	"A sound source"
 	def __init__(s, n, x, y, fn, active = False, animated = False, mod_amp = False, offset = None):
 		cx, cy = x*pix[0], y*pix[1]
 		s.n = n
@@ -217,6 +230,7 @@ class Source():
 		s.update_parameters()
 
 	def clicked(s, event = ""):
+		"Turn active on/off"
 		w.tag_raise("C%u" % s.n)
 		w.tag_raise("T%u" % s.n)
 		s.active = not s.active
@@ -228,12 +242,14 @@ class Source():
 		s.play_or_stop()
 		
 	def play_or_stop(s):
+		"Play (if active) or stop the sound"
 		if s.active and not stop_it:
 			s.source.play()
 		else:
 			s.source.stop()
 			
 	def makesolo(s, event = ""):
+		"Make sound solo"
 		s.solo = not s.solo
 		if s.solo and s.selected:
 			but_sol.select()
@@ -253,10 +269,12 @@ class Source():
 		s.update_color()	
 		
 	def moved(s, event = ""):
+		"Source has been dragged by the mouse"
 		x, y = event.x, event.y
 		s.moveto(x, y)
 		
 	def moveto(s, x, y):
+		"Move source to new position and update"
 		dx, dy = x-s.x, y-s.y
 		w.move("C%u" % s.n, dx, dy)
 		w.move("T%u" % s.n, dx, dy)
@@ -264,6 +282,7 @@ class Source():
 		s.update_parameters()
 		
 	def update_parameters(s):
+		"Calculate new position and gain"
 		sx = (math.pi*s.x/pix[0])-math.pi/2
 		vol = 3.*(1.-(1.*s.y/pix[1]))**2
 		x2 = math.sin(sx)
@@ -272,6 +291,7 @@ class Source():
 		s.gain_pure = max(0, vol)
 		
 	def sel(s, event = ""):
+		"Source has been selected, update properties area"
 		for p in par:
 			p.selected = False
 		s.selected = True
@@ -297,12 +317,14 @@ class Source():
 			p.update_sel()
 	
 	def update_sel(s):
+		"Change circle outline when selected"
 		if s.selected:
 			w.itemconfig("C%u" % s.n, width = 3, outline = "turquoise")
 		else:
 			w.itemconfig("C%u" % s.n, width = 1, outline = "black")
 		
 	def update_color(s):
+		"Change circle fill color"
 		if s.solo:
 			cc = "blue"
 			tc = "white"
@@ -317,6 +339,7 @@ class Source():
 		update_title()
 
 	def getdata(s):
+		"Dump this source's parameters for saving"
 		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated, s.mod_amp, "%.3f" % s.offset]
 
 demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
@@ -336,6 +359,7 @@ par[0].sel()
 update_title()
 
 def update_all():
+	"Move (or otherwise update) all sound sources regularly"
 	for p in par:
 		if p.mod_amp:
 			p.source.gain = .5*(1+math.sin(time()/2-p.offset)) * p.gain_pure
