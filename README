@@ -1,10 +1,12 @@
 A simple Python soundscape creation tool
 ========================================
 
-* Defaults to the included FM3 Buddha Machine loops, but you can change that in the source ("wpath").
+* Defaults to the included FM3 Buddha Machine loops, but you can change that either from the GUI (click "Load sounds" and select a directory with WAV files) or in the source ("wpath").
 
-* WAV files need to be mono (or panning will not work). Convert stereo files with stereo2mono.sh.
+* WAV files should ideally be mono. (You can convert stereo files with stereo2mono.sh, which uses sox.)
 
-* Inspired by http://www.interactivesoundscapes.org/software.html
+* Stereo files will also play in PyScape but will not be affected by panning.
 
-Requires the OpenAL and FreeALUT libraries to be installed.
+* This program is somewhat inspired by Interactive Soundscape Designer (http://www.interactivesoundscapes.org/software.html) and Boodler (http://boodler.org/).
+
+PyScape requires the OpenAL and FreeALUT libraries.
