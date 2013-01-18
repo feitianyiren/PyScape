@@ -51,12 +51,14 @@ w = Canvas(f1, width=pix[0], height=pix[1], bg="white")
 w.pack()
 
 f2 = Frame(master)
-f2.pack(side = RIGHT)
-gitem = LabelFrame(f2, text="Selected item", padx=5, pady=5)
-gitem.pack(side = TOP, padx=10, pady=10)
-Label(gitem, text = 50*' ').pack()
+f2.pack(side = RIGHT, fill = BOTH)
+gitem = LabelFrame(f2, text="Item properties", padx=5, pady=5)
+gitem.pack(side = TOP, padx=10, pady=10, fill = BOTH)
+
+titem = LabelFrame(f2, text="Item time behavior", padx=5, pady=5)
+titem.pack(side = TOP, padx=10, pady=10, fill = BOTH)
 lab = Entry(gitem)
-lab.pack(side = TOP, pady=30)
+lab.grid(row=0, pady=10)
 lab.delete(0, END)
 lab.insert(0, "(no selection)")
 
@@ -68,7 +70,7 @@ def tog_act():
 			p.update_color()
 
 but_act = Checkbutton(gitem, text = "Active", command = tog_act)
-but_act.pack(pady=20)
+but_act.grid(row=1, pady=10, sticky=W)
 
 def tog_sol():
 	for p in par:
@@ -76,7 +78,7 @@ def tog_sol():
 			p.makesolo()
 
 but_sol = Checkbutton(gitem, text = "Solo", command = tog_sol)
-but_sol.pack(pady=20)
+but_sol.grid(row=2, pady=10, sticky=W)
 
 do_ani = True
 def tog_ani():
@@ -84,8 +86,8 @@ def tog_ani():
 		if p.selected:
 			p.animated = not p.animated
 
-but_ani = Checkbutton(gitem, text = "Animate", command = tog_ani)
-but_ani.pack(pady=20)
+but_ani = Checkbutton(titem, text = "Animate", command = tog_ani)
+but_ani.grid(row=0, pady=10, sticky=W)
 
 def save_file():
 	mypath = asksaveasfilename()
@@ -293,6 +295,7 @@ else:
 			par[j-1].clicked()
 			par[j-1].animated = True
 
+par[0].sel()
 update_title()
 
 def move_ani():
