@@ -189,7 +189,7 @@ def load_dir(mypath = None):
 	fn.sort()
 	for n,f in enumerate(fn):
 		par.append(Source(
-		n, 20, 20, os.path.join(mypath, f)
+		n+1, 20, 20, os.path.join(mypath, f)
 		))
 	sort_all()
 	update_title()
