@@ -105,6 +105,19 @@ def tog_modamp():
 but_modamp = Checkbutton(titem, text = "Modulate amplitude", command = tog_modamp)
 but_modamp.grid(row=1, pady=10, sticky=W)
 
+def tog_trigger():
+	"Toggle sound triggered flag"
+	for p in par:
+		if p.selected:
+			p.source.looping = not p.source.looping
+			if p.source.looping:
+				p.source.play()
+			else:
+				p.source.stop()
+
+but_trig = Checkbutton(titem, text = "Trigger", command = tog_trigger)
+but_trig.grid(row=2, pady=10, sticky=W)
+
 def save_file():
 	"Save as preset"
 	mypath = asksaveasfilename()
@@ -152,7 +165,8 @@ def load_file(mypath = None):
 				act = (row[3] == 'True')
 				par.append(Source(
 				int(row[0]), float(row[1]), float(row[2]), row[4], active = act,
-				animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7)
+				animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7),
+				looping = getcol(row, 8, z = True)
 				))
 	except:
 		print "Cannot read file", mypath
@@ -230,7 +244,7 @@ but_off.pack(side = LEFT)
 
 class Source():
 	"A sound source"
-	def __init__(s, n, x, y, fn, active = False, animated = False, mod_amp = False, offset = None):
+	def __init__(s, n, x, y, fn, active = False, animated = False, mod_amp = False, offset = None, looping = True):
 		cx, cy = x*pix[0], y*pix[1]
 		s.n = n
 		s.fn = fn
@@ -259,7 +273,7 @@ class Source():
 		s.x, s.y = cx, cy
 		s.source = contextlistener.get_source()
 		s.source.buffer = openal.Buffer(fn)
-		s.source.looping = True
+		s.source.looping = looping
 		s.update_parameters()
 
 	def clicked(s, event = ""):
@@ -344,6 +358,10 @@ class Source():
 			but_modamp.select()
 		else:
 			but_modamp.deselect()
+		if s.source.looping:
+			but_trig.deselect()
+		else:
+			but_trig.select()
 		lab.delete(0, END)
 		lab.insert(0, basename(s.fn))
 		for p in par:
@@ -373,7 +391,7 @@ class Source():
 
 	def getdata(s):
 		"Dump this source's parameters for saving"
-		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated, s.mod_amp, "%.3f" % s.offset]
+		return [s.n, "%.5f" % (1.*s.x/pix[0]), "%.5f" % (1.*s.y/pix[1]), s.active, s.fn, s.animated, s.mod_amp, "%.3f" % s.offset, s.source.looping>0]
 
 demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
 
@@ -395,11 +413,21 @@ update_title()
 
 def update_all():
 	"Move (or otherwise update) all sound sources regularly"
+	is_solo = False
+	for p in par:
+		if p.solo:
+			is_solo = True
 	for p in par:
 		if p.mod_amp:
 			p.source.gain = .5*(1+math.sin(time()/2-p.offset)) * p.gain_pure
 		else:
 			p.source.gain = p.gain_pure
+		if not p.source.looping and p.active:
+			if p.source.state != openal._al.PLAYING:
+				if random.expovariate(1) > 4 and (not is_solo or p.solo):
+					p.source.pitch = random.normalvariate(1., .3)
+					p.source.play()
+					#print "triggering", p.n, "pitch", p.source.pitch
 		if p.animated and do_ani:
 			p.vx += (r()-.5)*p.speed
 			p.vy += (r()-.5)*p.speed

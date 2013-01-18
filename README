@@ -1,6 +1,10 @@
 A simple Python soundscape creation tool
 ========================================
 
+Run as:
+
+  python2 pyscape.py [filename.dat]
+
 * Defaults to the included FM3 Buddha Machine loops, but you can change that either from the GUI (click "Load sounds" and select a directory with WAV files) or in the source ("wpath").
 
 * WAV files should ideally be mono. (You can convert stereo files with stereo2mono.sh, which uses sox.)
