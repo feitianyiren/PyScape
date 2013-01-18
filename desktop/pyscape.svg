@@ -15,7 +15,7 @@
    id="svg6230"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="pyscape-draft.svg"
+   sodipodi:docname="pyscape.svg"
    inkscape:export-filename="/home/martin/git/PyScape/desktop/pyscape-draft.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -27,7 +27,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2052,7 +2052,7 @@
      id="namedview6546"
      showgrid="false"
      inkscape:zoom="0.39"
-     inkscape:cx="231.17383"
+     inkscape:cx="192.47139"
      inkscape:cy="410.21182"
      inkscape:window-x="47"
      inkscape:window-y="75"
@@ -3192,19 +3192,21 @@
      inkscape:label="Text"
      style="display:inline"
      sodipodi:insensitive="true">
-    <text
-       xml:space="preserve"
+    <g
+       transform="scale(0.95832777,1.0434843)"
        style="font-size:30.66648865px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffd42a;fill-opacity:1;stroke:none;font-family:Linux Biolinum O;-inkscape-font-specification:Linux Biolinum O"
-       x="555.17615"
-       y="814.23456"
-       id="text8638"
-       sodipodi:linespacing="125%"
-       transform="scale(0.95832777,1.0434843)"><tspan
-         sodipodi:role="line"
-         id="tspan8640"
-         x="555.17615"
-         y="814.23456"
-         style="font-size:479.16387939px;fill:#ffd42a">Py</tspan></text>
+       id="text8638">
+      <path
+         d="m 646.21728,543.50697 c 0,-13.89574 8.62499,-21.08321 43.12475,-21.08321 33.06228,0 68.04127,9.10417 68.04127,66.12461 0,55.10379 -26.83322,72.83291 -73.31207,72.83291 -11.97908,0 -31.62482,-1.43749 -37.85395,-4.79164 l 0,-113.08267 m -41.20809,57.49966 0,117.39515 c 0,35.93726 -0.95833,69.95795 -4.79164,95.83278 l 0.95833,1.43749 c 5.74996,-0.95833 18.6874,-1.43749 24.43736,-1.43749 5.74996,0 18.68739,0.47916 24.43736,1.43749 l 0.95832,-1.43749 c -3.8333,-27.31232 -4.79164,-59.89552 -4.79164,-95.83278 l 0,-41.20809 c 10.5416,3.35414 23.47905,4.79164 40.24977,4.79164 87.20774,0 117.39515,-55.10389 117.39515,-95.83278 0,-35.45809 -22.52079,-84.33284 -111.16602,-84.33284 -12.45825,0 -52.70804,3.35415 -67.08294,3.35415 -5.74996,0 -18.6874,-0.47917 -24.43736,-1.4375 l -0.95833,1.4375 c 3.83331,27.31231 4.79164,59.89552 4.79164,95.83277"
+         style="font-size:479.16387939px;fill:#ffd42a"
+         id="path3650"
+         inkscape:connector-curvature="0" />
+      <path
+         d="m 836.2507,607.23576 c 18.68737,42.64554 75.70791,166.26991 92.95779,211.79044 -15.33323,35.93725 -34.97899,72.83294 -56.54134,108.7702 4.79163,-1.43749 11.9791,-2.39582 16.77074,-2.39582 4.79163,0 18.68739,0.95833 23.47903,2.39582 18.2082,-59.89543 123.14508,-288.45669 138.95748,-320.56064 -4.7916,1.43749 -15.8124,1.43749 -20.604,1.43749 -4.7916,0 -13.8958,0 -18.6874,-1.43749 -17.24988,54.14547 -39.77062,115.47855 -63.24963,165.31154 l -0.95833,0 c -23.479,-57.02044 -45.99975,-110.20775 -63.72879,-165.31154 -6.22913,1.43749 -16.77075,1.43749 -23.47903,1.43749 -6.22913,0 -18.20824,0 -24.91652,-1.43749"
+         style="font-size:479.16387939px;fill:#ffd42a"
+         id="path3652"
+         inkscape:connector-curvature="0" />
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
