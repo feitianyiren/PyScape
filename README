@@ -3,7 +3,7 @@ A simple Python soundscape creation tool
 
 Run as:
 
-  python2 pyscape.py [filename.dat]
+  python2 pyscape.py [filename.pyscape]
 
 * Defaults to the included FM3 Buddha Machine loops, but you can change that either from the GUI (click "Load sounds" and select a directory with WAV files) or in the source ("wpath").
 
