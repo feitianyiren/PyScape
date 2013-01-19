@@ -242,7 +242,7 @@ def load_file(mypath = None):
 					except:
 						tkMessageBox.showwarning(
 							"Load preset",
-							"Could not load background image %s." % row[1]
+							"Could not load background image %s" % row[1]
 						)
 					continue
 				act = (row[3] == 'True')
@@ -259,12 +259,12 @@ def load_file(mypath = None):
 				except:
 					tkMessageBox.showwarning(
 						"Load preset",
-						"Could not load sound file %s." % fname
+						"Could not load sound file %s" % fname
 					)
 	except:
 		tkMessageBox.showerror(
 			"Load preset",
-			"Could not read preset file %s." % mypath
+			"Could not read preset file %s" % mypath
 		)
 		return
 	start_act()
@@ -305,7 +305,7 @@ def load_dir(mypath = None):
 	except:
 		tkMessageBox.showwarning(
 			"Load sound directory",
-			"Directory %s could not be read." % mypath
+			"Directory %s could not be read" % mypath
 		)
 		return
 	fn.sort()
@@ -319,7 +319,7 @@ def load_dir(mypath = None):
 	else:
 		tkMessageBox.showinfo(
 			"Load sound directory",
-			"No sounds found in directory %s." % mypath
+			"No sounds found in directory %s" % mypath
 		)
 	update_title()
 	sound_dir = mypath
@@ -361,7 +361,7 @@ def load_sounds(mypath = None):
 		except:
 			tkMessageBox.showerror(
 				"Add sounds",
-				"There was a problem with the sound file %s.\nFormats other than WAV probably will not work." % f
+				"There was a problem with the sound file %s\nFormats other than WAV probably will not work." % f
 			)
 		w.tag_raise("C%u" % n)
 		w.tag_raise("T%u" % n)
@@ -414,7 +414,7 @@ def select_background():
 	except:
 		tkMessageBox.showerror(
 			"Change wallpaper",
-			"Could not load image %s." % mypath
+			"Could not load image %s" % mypath
 		)
 	image_dir = os.path.dirname(mypath)
 
