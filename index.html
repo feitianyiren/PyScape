@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<title>PyScape, a soundscape generator in Python/Tk</title>
+<link rel="stylesheet" href="annotate.css">
+</head>
+<body>
+<h1>PyScape</h1>
+<h2>A soundscape generator in Python/Tk</h2>
+
+<a href="media/pyscape.png"><img src="media/pyscape.png" alt="screenshot" width="400"></a>
+<smaller><i>The sea.pyscape preset</i></smaller><br>
+
+<audio controls>
+  <source src="media/pyscape-sample.mp3">
+  <source src="media/pyscape-sample.ogg">
+  <p>Your browser does not support audio playback, download the file:</p>
+  <a href="media/pyscape-sample.mp3">MP3</a>,
+  <a href="media/pyscape-sample.ogg">Vorbis</a>,
+</audio>
+
+<h3>Usage</h3>
+
+<p>Run as:</p>
+
+<blockquote><tt>python2 pyscape.py [filename.pyscape]</tt></blockquote>
+
+<p>or via the included <tt>.desktop</tt> file.</p>
+
+<h4>Notes</h4>
+
+<ul>
+<li>The horizontal axis is left/right panning, the vertical axis is volume. The circles are individual sound files/sources.</li>
+
+<li>Try the presets first ("Load presets").</li>
+
+<li>You can turn sources on and off with the middle mouse button (or the "Active" checkbox in the right pane) and select and drag them with the left mouse button. Right mouse button or "Solo" turns on solo mode.</li>
+
+<li>"Animate": Makes the affected source wander around on the map via a random walk process.</li>
+
+<li>"Modulate amplitude": Adds a sinusoidal amplitude modulation to the sound source, e.g. like ocean waves.</li>
+
+<li>"Trigger": The sound does not play continuously but is triggered randomly.</li>
+
+<li>"Load sound directory": Load WAVs from a directory; replaces existing sound sources!</li>
+
+<li>"Add sounds": Adds a single or multiple sound files. New files appear near the center of the canvas.</li>
+
+<li>"Remove unused sounds": Gets rid of all gray (=inactive) sounds.</li>
+
+<li>"Arrange sounds": Arranges sound in a grid for a better overview.</li>
+
+<li>"Load/save preset": Save current configuration as a <tt>.pyscape</tt> file, which is just a simple CSV-formatted text file.</li>
+
+<li>"Play/Pause": Start/stop audio from program.</li>
+
+<li>"Change wallpaper": Change the background image. Images larger than the canvas are automatically resized to fit. Python Imaging Library is needed for wallpapers.</li>
+
+<li>WAV files should ideally be mono. (You can convert stereo files with stereo2mono.sh, which needs sox.)</li>
+
+<li>Stereo files will also play in PyScape but will not be affected by panning.</li>
+
+</ul>
+
+<h3>Requirements</h3>
+
+<p>PyScape requires Python 2 and the OpenAL and FreeALUT libraries. If the Python Imaging Library is also present, pretty background images are displayed.</p>
+
+<h3>Platforms</h3>
+
+<p>So far this has only been tested on Linux, but it should also work on other platforms supported by Python.</p>
+
+<a href="media/pyscape3.png"><img src="media/pyscape3.png" alt="screenshot" width="400"></a>
+
+<h3>License</h3>
+
+<p>While the program itself is distributed under the GPL, the sounds and images have various CC licenses, sometimes forbidding commercial uses. Please consult the README files in the respective subdirectories for details.</p>
+
+<h3>Thanks</h3>
+
+<p>This program is somewhat inspired by <a href="http://www.interactivesoundscapes.org/software.html">Interactive Soundscape Designer</a> and <a href="http://boodler.org/">Boodler</a>.</p>
+
+<h3>Contact</h3>
+
+<p><a href="mailto:mdoege@compuserve.com">Send email</a></p>
+
+</pre>
+</body>
+</html>
