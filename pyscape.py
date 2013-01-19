@@ -22,6 +22,11 @@ from time import time
 
 import openal
 
+try:
+	from PIL import Image, ImageTk
+except:
+	Image, ImageTk = None, None
+
 random.seed()
 
 device = openal.Device()
@@ -59,6 +64,26 @@ f1 = Frame(master)
 f1.pack(side = LEFT)
 w = Canvas(f1, width=pix[0], height=pix[1], bg="white")
 w.pack()
+
+def load_background(f = None):
+	"Load appropriate background image"
+	global photo
+	images = (
+		("jungle.pyscape", "Poco_azul_800x600.jpg"),
+		("sea.pyscape",    "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
+		("water.pyscape",  "Elakala_Waterfalls_pub5_-_West_Virginia_-_ForestWander_800x600.jpg"),
+	)
+	if Image == None:
+		return
+	impath = "Buddha_in_shilparamam_800x600.jpg"
+	if f:
+		for a,b in images:
+			if a in f:
+				impath = b
+	im = Image.open(os.path.join("backgrounds", impath))
+	photo = ImageTk.PhotoImage(im)
+	w.create_image(0, 0, image = photo, anchor = NW, tags = "BACK")
+load_background()
 
 f2 = Frame(master)
 f2.pack(side = RIGHT, fill = BOTH)
@@ -147,7 +172,7 @@ def getcol_float(r, n, z = 0.):
 		return float(r[n])
 	except:
 		return z
-			
+
 def load_file(mypath = None):
 	"Load preset"
 	global par
@@ -164,6 +189,7 @@ def load_file(mypath = None):
 		mypath = askopenfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")])
 		if not len(mypath):
 			return
+	load_background(f = mypath)
 	try:
 		with open(mypath, 'rb') as csvfile:
 			wr = csv.reader(csvfile)
@@ -178,7 +204,8 @@ def load_file(mypath = None):
 		print "Cannot read file", mypath
 		return
 	start_act()
-	par[0].sel()
+	if par:
+		par[0].sel()
 	update_title()
 
 def sort_all():
@@ -417,7 +444,8 @@ else:
 			if r() < .25:
 				par[j-1].mod_amp = True
 
-par[0].sel()
+if par:
+	par[0].sel()
 update_title()
 
 def update_all():
