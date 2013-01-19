@@ -69,9 +69,10 @@ def load_background(f = None):
 	"Load appropriate background image"
 	global photo
 	images = (
-		("jungle.pyscape", "Poco_azul_800x600.jpg"),
-		("sea.pyscape",    "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
-		("water.pyscape",  "Elakala_Waterfalls_pub5_-_West_Virginia_-_ForestWander_800x600.jpg"),
+		("jungle.pyscape",     "Poco_azul_800x600.jpg"),
+		("sea.pyscape",        "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
+		("water.pyscape",      "Elakala_Waterfalls_pub5_-_West_Virginia_-_ForestWander_800x600.jpg"),
+		("explosions.pyscape", "USAF_EOD_explosion_800x600.jpg"),
 	)
 	if Image == None:
 		return

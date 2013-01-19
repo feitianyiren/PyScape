@@ -13,4 +13,4 @@ Run as:
 
 * This program is somewhat inspired by Interactive Soundscape Designer (http://www.interactivesoundscapes.org/software.html) and Boodler (http://boodler.org/).
 
-PyScape requires the OpenAL and FreeALUT libraries.
+PyScape requires the OpenAL and FreeALUT libraries. If the Python Imaging Library is also present, pretty background images are displayed.
