@@ -443,6 +443,8 @@ class Source():
 			s.offset = r()*30.
 		else:
 			s.offset = offset
+		s.source = contextlistener.get_source()
+		s.source.buffer = openal.Buffer(fn)
 		s.circ = w.create_oval(cx-cr, cy-cr, cx+cr, cy+cr, fill = "white", tags = "C%u" % n)
 		s.text = w.create_text(cx, cy, text = "%u" % n, tags = "T%u" % n)
 		w.tag_bind("C%u" % n, "<Button-2>", s.clicked)
@@ -455,8 +457,6 @@ class Source():
 		w.tag_bind("T%u" % n, "<Button-3>", s.makesolo)
 		s.update_color()
 		s.x, s.y = cx, cy
-		s.source = contextlistener.get_source()
-		s.source.buffer = openal.Buffer(fn)
 		s.source.looping = looping
 		s.update_parameters()
 
