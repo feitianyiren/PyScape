@@ -14,6 +14,7 @@ Martin C. Doege
 """
 
 from Tkinter import *
+import tkMessageBox
 from tkFileDialog import *
 import os, sys, random, math, csv, platform
 from random import random as r
@@ -48,19 +49,12 @@ image_path = "backgrounds"	# initial path to background images
 
 ############################################################################
 
-if not os.path.isdir(wpath):
-	print "WAV sample directory %s not found!" % wpath
-	print "Please change the variable wpath to point to a directory"
-	print "with 20 or so suitable mono WAV files."
-	sys.exit(1)
-fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
-fn.sort()
-par = []
-
 # Remember last directory used for images, sounds, and presets:
 image_dir = image_path
 sound_dir = wpath
 preset_dir = preset_path
+
+par = []
 
 def update_title():
 	"Update window title"
@@ -246,7 +240,10 @@ def load_file(mypath = None):
 					try:
 						load_background(imfull = row[1])
 					except:
-						print "Could not load background image", row[1]
+						tkMessageBox.showwarning(
+							"Load preset",
+							"Could not load background image %s." % row[1]
+						)
 					continue
 				act = (row[3] == 'True')
 				fname = row[4]
@@ -260,9 +257,15 @@ def load_file(mypath = None):
 					looping = getcol(row, 8, z = True)
 					))
 				except:
-					print "Could not load sound file", fname
+					tkMessageBox.showwarning(
+						"Load preset",
+						"Could not load sound file %s." % fname
+					)
 	except:
-		print "Cannot read file", mypath
+		tkMessageBox.showerror(
+			"Load preset",
+			"Could not read preset file %s." % mypath
+		)
 		return
 	start_act()
 	if par:
@@ -284,26 +287,40 @@ def load_dir(mypath = None):
 	"Open directory with sound files"
 	global par, sound_dir
 
-	for p in par:
-		n = p.n
-		p.active = False
-		p.play_or_stop()
-		w.delete("C%u" % n)
-		w.delete("T%u" % n)
+	if par:
+		for p in par:
+			n = p.n
+			p.active = False
+			p.play_or_stop()
+			w.delete("C%u" % n)
+			w.delete("T%u" % n)
 	par = []
 	update_title()
 	if not mypath:
 		mypath = askdirectory(initialdir = sound_dir)
 		if not len(mypath):
 			return
-	fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
+	try:
+		fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
+	except:
+		tkMessageBox.showwarning(
+			"Load sound directory",
+			"Directory %s could not be read." % mypath
+		)
+		return
 	fn.sort()
 	for n,f in enumerate(fn):
 		par.append(Source(
 		n+1, .5, .5, os.path.join(mypath, f)
 		))
 	sort_all()
-	par[0].sel()
+	if par:
+		par[0].sel()
+	else:
+		tkMessageBox.showinfo(
+			"Load sound directory",
+			"No sounds found in directory %s." % mypath
+		)
 	update_title()
 	sound_dir = mypath
 
@@ -339,7 +356,13 @@ def load_sounds(mypath = None):
 			xpos = r()/2.+.25
 		else:
 			xpos = .5
-		par.append(Source(n, xpos, .5, f, active = True))
+		try:
+			par.append(Source(n, xpos, .5, f, active = True))
+		except:
+			tkMessageBox.showerror(
+				"Add sounds",
+				"There was a problem with the sound file %s.\nFormats other than WAV probably will not work." % f
+			)
 		w.tag_raise("C%u" % n)
 		w.tag_raise("T%u" % n)
 		par[-1].play_or_stop()
@@ -389,7 +412,10 @@ def select_background():
 	try:
 		load_background(imfull = mypath)
 	except:
-		print "Could not load image", mypath
+		tkMessageBox.showerror(
+			"Change wallpaper",
+			"Could not load image %s." % mypath
+		)
 	image_dir = os.path.dirname(mypath)
 
 but_on = Button(f2, text = "Play", command = start_act, state = DISABLED, pady = 20)
@@ -556,19 +582,14 @@ demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
 if len(sys.argv) > 1:
 	print "Loading", sys.argv[1]
 	load_file(mypath = sys.argv[1])
-else:		
-	for i in range(len(fn)):
-		par.append(Source(i+1, r()*.8+.1, r()*.8+.1, os.path.join(wpath, fn[i])))
+else:
+	load_dir(mypath = wpath)
 	if len(par) > 16:
 		for j in random.choice(demos):
 			par[j-1].clicked()
 			par[j-1].animated = True
 			if r() < .25:
 				par[j-1].mod_amp = True
-
-if par:
-	par[0].sel()
-update_title()
 
 def update_all():
 	"Move (or otherwise update) all sound sources regularly"
