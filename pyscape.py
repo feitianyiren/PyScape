@@ -68,9 +68,23 @@ f1.pack(side = LEFT)
 w = Canvas(f1, width=pix[0], height=pix[1], bg="white")
 w.pack()
 
-def load_background(f = None):
-	"Load appropriate background image"
-	global photo
+def get_size(a, b):
+	"Get image dimensions for resize"
+	x1, y1, x2, y2 = [float(q) for q in a[0],a[1],b[0],b[1]]
+	asp1 = x1/y1
+	asp2 = x2/y2
+	if asp1 > asp2:
+		w = x2
+		h = x2 / asp1
+	else:
+		h = y2
+		w = y2 * asp1
+	return int(w+.5), int(h+.5)
+
+imfullpath = None
+def load_background(f = None, imfull = None):
+	"Load background image"
+	global photo, imfullpath
 	images = (
 		("jungle.pyscape",     "Poco_azul_800x600.jpg"),
 		("sea.pyscape",        "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
@@ -79,14 +93,29 @@ def load_background(f = None):
 	)
 	if Image == None:
 		return
-	impath = "Buddha_in_shilparamam_800x600.jpg"
+	i = "Buddha_in_shilparamam_800x600.jpg"
 	if f:
 		for a,b in images:
 			if a in f:
-				impath = b
-	im = Image.open(os.path.join("backgrounds", impath))
-	photo = ImageTk.PhotoImage(im)
-	w.create_image(0, 0, image = photo, anchor = NW, tags = "BACK")
+				i = b
+	im = os.path.join("backgrounds", i)
+	xa, ya = 0, 0
+	if imfull:
+		imfile = Image.open(imfull)
+		imfullpath = imfull
+		if imfile.size[0] > pix[0] or imfile.size[1] > pix[1]:
+			xd, yd = get_size(imfile.size, pix)
+			imfile = imfile.resize((xd, yd), Image.ANTIALIAS)
+			xa = (pix[0]-xd)/2
+			ya = (pix[1]-yd)/2
+	else:
+		imfile = Image.open(im)
+		imfullpath = im
+	photo = ImageTk.PhotoImage(imfile)
+	w.create_image(xa, ya, image = photo, anchor = NW, tags = "BACK")
+	w.tag_lower("BACK")
+	cc = imfile.getpixel((0,0))
+	w.config(bg = "#%02x%02x%02x" % (cc[0], cc[1], cc[2]))
 load_background()
 
 f2 = Frame(master)
@@ -155,13 +184,15 @@ but_trig.grid(row=2, pady=10, sticky=W)
 
 def save_file():
 	"Save as preset"
-	mypath = asksaveasfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")], defaultextension = ps_ext)
+	mypath = asksaveasfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], defaultextension = ps_ext)
 	if not len(mypath):
 		return
 	with open(mypath, 'wb') as csvfile:
 		wr = csv.writer(csvfile)
 		for p in par:
 			wr.writerow(p.getdata())
+		if imfullpath:
+			wr.writerow(("background", imfullpath))
 
 def getcol(r, n, z = False):
 	"Attempt to read boolean from file"
@@ -190,7 +221,7 @@ def load_file(mypath = None):
 	par = []
 	update_title()
 	if not mypath:
-		mypath = askopenfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")], initialdir = preset_path)
+		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_path)
 		if not len(mypath):
 			return
 	load_background(f = mypath)
@@ -198,6 +229,9 @@ def load_file(mypath = None):
 		with open(mypath, 'rb') as csvfile:
 			wr = csv.reader(csvfile)
 			for row in wr:
+				if row[0] == "background":
+					load_background(imfull = row[1])
+					continue
 				act = (row[3] == 'True')
 				fname = row[4]
 				if platform.system() == "Windows" and '/' in fname:
@@ -217,7 +251,7 @@ def load_file(mypath = None):
 	update_title()
 
 def sort_all():
-	"Sort sources by number"
+	"Arrange sources on screen by number"
 	xp, yp = 2*cr, 2*cr
 	for p in par:
 		p.moveto(xp, yp)
@@ -246,17 +280,56 @@ def load_dir(mypath = None):
 	fn.sort()
 	for n,f in enumerate(fn):
 		par.append(Source(
-		n+1, 20, 20, os.path.join(mypath, f)
+		n+1, .5, .5, os.path.join(mypath, f)
 		))
 	sort_all()
 	par[0].sel()
 	update_title()
 	wpath = mypath
 
-Button(f1, text = "Save", command = save_file).pack(side = RIGHT)
-Button(f1, text = "Load", command = load_file).pack(side = RIGHT)
-Button(f1, text = "Sort", command = sort_all).pack(side = RIGHT)
-Button(f1, text = "Load sounds", command = load_dir).pack(side = RIGHT)
+def rm_inact():
+	"Delete all currently inactive sounds"
+	global par
+	for p in par:
+		if not p.active:
+			w.delete("C%u" % p.n)
+			w.delete("T%u" % p.n)
+	par2 = []
+	for p in par:
+		if p.active:
+			par2.append(p)
+	par = par2
+	update_title()
+
+def load_sounds(mypath = None):
+	"Add one or more sounds to the current scene"
+	if not mypath:
+		mypath = askopenfilenames(filetypes = [("WAV audio files", ".wav"),("All files",".*")])
+		if not len(mypath):
+			return
+	n = 0
+	for p in par:
+		if p.n >= n:
+			n = p.n + 1
+	for f in mypath:
+		if len(mypath) > 1:
+			xpos = r()/2.+.25
+		else:
+			xpos = .5
+		par.append(Source(n, xpos, .5, f, active = True))
+		w.tag_raise("C%u" % n)
+		w.tag_raise("T%u" % n)
+		par[-1].play_or_stop()
+		n += 1
+	update_title()
+
+Button(f1, text = "Save preset", command = save_file).pack(side = RIGHT)
+Button(f1, text = "Load preset", command = load_file).pack(side = RIGHT)
+
+Button(f1, text = "Load sound directory", command = load_dir).pack(side = LEFT)
+Button(f1, text = "Add sounds", command = load_sounds).pack(side = LEFT)
+Button(f1, text = "Sort sounds", command = sort_all).pack(side = LEFT)
+Button(f1, text = "Remove inactive sounds", command = rm_inact).pack(side = LEFT)
 
 def start_act():
 	"Start performance"
@@ -280,11 +353,20 @@ def stop_act():
 	for p in par:
 		p.play_or_stop()
 
-but_on = Button(f1, text = "Play", command = start_act, state = DISABLED)
-but_off = Button(f1, text = "Pause", command = stop_act)
+def select_background():
+	"Select a new background image"
+	mypath = askopenfilename(filetypes = [("JPEG images", ".jpg"),("PNG images", "*.png"),("All files",".*")])
+	if not len(mypath):
+		return
+	load_background(imfull = mypath)
 
-but_on.pack(side = LEFT)
-but_off.pack(side = LEFT)
+but_on = Button(f2, text = "Play", command = start_act, state = DISABLED, pady = 20)
+but_off = Button(f2, text = "Pause", command = stop_act, pady = 20)
+but_back = Button(f2, text = "Change wallpaper", command = select_background, pady = 20)
+
+but_back.pack(side = BOTTOM, fill = X)
+but_off.pack(side = BOTTOM, fill = X, pady = 20)
+but_on.pack(side = BOTTOM, fill = X)
 
 class Source():
 	"A sound source"
@@ -470,7 +552,9 @@ def update_all():
 		if not p.source.looping and p.active:
 			if p.source.state != openal._al.PLAYING:
 				if random.expovariate(1) > 4 and (not is_solo or p.solo):
-					p.source.pitch = random.normalvariate(1., .3)
+					pitch = random.normalvariate(1., .3)
+					pitch = min(2., max(pitch, .5))
+					p.source.pitch = pitch
 					p.source.play()
 					#print "triggering", p.n, "pitch", p.source.pitch
 		if p.animated and do_ani:
