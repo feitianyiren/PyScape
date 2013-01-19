@@ -46,6 +46,14 @@ ps_ext = '.pyscape'	# file extension for presets
 wpath = os.path.join("sounds", "fm3")	# initial path to WAV files
 preset_path = "presets"		# initial path to presets
 image_path = "backgrounds"	# initial path to background images
+global_dir = "/usr/share/pyscape"	# system global directory (not needed)
+use_global = False		# look in current directory or shared directory?
+
+if os.path.isdir(global_dir):
+	wpath = os.path.join(global_dir, wpath)
+	preset_path = os.path.join(global_dir, preset_path)
+	image_path = os.path.join(global_dir, image_path)
+	use_global = True
 
 ############################################################################
 
@@ -102,7 +110,7 @@ def load_background(f = None, imfull = None):
 		for a,b in images:
 			if a in f:
 				i = b
-	im = os.path.join("backgrounds", i)
+	im = os.path.join(image_path, i)
 	xa, ya = 0, 0
 	if imfull:
 		imfile = Image.open(imfull)
@@ -250,6 +258,8 @@ def load_file(mypath = None):
 				if platform.system() == "Windows" and '/' in fname:
 					fname = fname.split('/')
 					fname = os.path.join(fname)
+				if platform.system() == "Linux" and use_global and fname[0] != '/':
+					fname = os.path.join(global_dir, fname)
 				try:
 					par.append(Source(
 					int(row[0]), float(row[1]), float(row[2]), fname, active = act,
