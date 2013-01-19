@@ -44,6 +44,10 @@ cr = 20			# circle size
 ps_ext = '.pyscape'	# file extension for presets
 wpath = os.path.join("sounds", "fm3")	# initial path to WAV files
 preset_path = "presets"		# initial path to presets
+image_path = "backgrounds"	# initial path to background images
+
+############################################################################
+
 if not os.path.isdir(wpath):
 	print "WAV sample directory %s not found!" % wpath
 	print "Please change the variable wpath to point to a directory"
@@ -52,6 +56,11 @@ if not os.path.isdir(wpath):
 fn = [x for x in os.listdir(wpath) if (x[0] != '.' and ".wav" in x)]
 fn.sort()
 par = []
+
+# Remember last directory used for images, sounds, and presets:
+image_dir = image_path
+sound_dir = wpath
+preset_dir = preset_path
 
 def update_title():
 	"Update window title"
@@ -85,6 +94,7 @@ imfullpath = None
 def load_background(f = None, imfull = None):
 	"Load background image"
 	global photo, imfullpath
+
 	images = (
 		("jungle.pyscape",     "Poco_azul_800x600.jpg"),
 		("sea.pyscape",        "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
@@ -184,7 +194,9 @@ but_trig.grid(row=2, pady=10, sticky=W)
 
 def save_file():
 	"Save as preset"
-	mypath = asksaveasfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], defaultextension = ps_ext)
+	global preset_dir
+
+	mypath = asksaveasfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], defaultextension = ps_ext, initialdir = preset_dir)
 	if not len(mypath):
 		return
 	with open(mypath, 'wb') as csvfile:
@@ -193,6 +205,7 @@ def save_file():
 			wr.writerow(p.getdata())
 		if imfullpath:
 			wr.writerow(("background", imfullpath))
+	preset_dir = os.path.dirname(mypath)
 
 def getcol(r, n, z = False):
 	"Attempt to read boolean from file"
@@ -210,7 +223,7 @@ def getcol_float(r, n, z = 0.):
 
 def load_file(mypath = None):
 	"Load preset"
-	global par
+	global par, preset_dir
 
 	for p in par:
 		n = p.n
@@ -221,7 +234,7 @@ def load_file(mypath = None):
 	par = []
 	update_title()
 	if not mypath:
-		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_path)
+		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_dir)
 		if not len(mypath):
 			return
 	load_background(f = mypath)
@@ -230,18 +243,24 @@ def load_file(mypath = None):
 			wr = csv.reader(csvfile)
 			for row in wr:
 				if row[0] == "background":
-					load_background(imfull = row[1])
+					try:
+						load_background(imfull = row[1])
+					except:
+						print "Could not load background image", row[1]
 					continue
 				act = (row[3] == 'True')
 				fname = row[4]
 				if platform.system() == "Windows" and '/' in fname:
 					fname = fname.split('/')
 					fname = os.path.join(fname)
-				par.append(Source(
-				int(row[0]), float(row[1]), float(row[2]), fname, active = act,
-				animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7),
-				looping = getcol(row, 8, z = True)
-				))
+				try:
+					par.append(Source(
+					int(row[0]), float(row[1]), float(row[2]), fname, active = act,
+					animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7),
+					looping = getcol(row, 8, z = True)
+					))
+				except:
+					print "Could not load sound file", fname
 	except:
 		print "Cannot read file", mypath
 		return
@@ -249,6 +268,7 @@ def load_file(mypath = None):
 	if par:
 		par[0].sel()
 	update_title()
+	preset_dir = os.path.dirname(mypath)
 
 def sort_all():
 	"Arrange sources on screen by number"
@@ -262,7 +282,7 @@ def sort_all():
 
 def load_dir(mypath = None):
 	"Open directory with sound files"
-	global par, wpath
+	global par, sound_dir
 
 	for p in par:
 		n = p.n
@@ -273,7 +293,7 @@ def load_dir(mypath = None):
 	par = []
 	update_title()
 	if not mypath:
-		mypath = askdirectory(initialdir = wpath)
+		mypath = askdirectory(initialdir = sound_dir)
 		if not len(mypath):
 			return
 	fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
@@ -285,11 +305,12 @@ def load_dir(mypath = None):
 	sort_all()
 	par[0].sel()
 	update_title()
-	wpath = mypath
+	sound_dir = mypath
 
 def rm_inact():
 	"Delete all currently inactive sounds"
 	global par
+
 	for p in par:
 		if not p.active:
 			w.delete("C%u" % p.n)
@@ -303,8 +324,10 @@ def rm_inact():
 
 def load_sounds(mypath = None):
 	"Add one or more sounds to the current scene"
+	global sound_dir
+
 	if not mypath:
-		mypath = askopenfilenames(filetypes = [("WAV audio files", ".wav"),("All files",".*")])
+		mypath = askopenfilenames(filetypes = [("WAV audio files", ".wav"),("All files",".*")], initialdir = sound_dir)
 		if not len(mypath):
 			return
 	n = 0
@@ -322,18 +345,20 @@ def load_sounds(mypath = None):
 		par[-1].play_or_stop()
 		n += 1
 	update_title()
+	sound_dir = os.path.dirname(mypath[0])
 
 Button(f1, text = "Save preset", command = save_file).pack(side = RIGHT)
 Button(f1, text = "Load preset", command = load_file).pack(side = RIGHT)
 
 Button(f1, text = "Load sound directory", command = load_dir).pack(side = LEFT)
 Button(f1, text = "Add sounds", command = load_sounds).pack(side = LEFT)
-Button(f1, text = "Sort sounds", command = sort_all).pack(side = LEFT)
-Button(f1, text = "Remove inactive sounds", command = rm_inact).pack(side = LEFT)
+Button(f1, text = "Remove unused sounds", command = rm_inact).pack(side = LEFT)
+Button(f1, text = "Arrange sounds", command = sort_all).pack(side = LEFT)
 
 def start_act():
 	"Start performance"
 	global stop_it, do_ani
+
 	stop_it = False
 	do_ani = True
 	but_on.config(state = DISABLED)
@@ -346,6 +371,7 @@ stop_it = False
 def stop_act():
 	"Pause performance"
 	global stop_it, do_ani
+
 	stop_it = True
 	do_ani = False
 	but_off.config(state = DISABLED)
@@ -355,10 +381,16 @@ def stop_act():
 
 def select_background():
 	"Select a new background image"
-	mypath = askopenfilename(filetypes = [("JPEG images", ".jpg"),("PNG images", "*.png"),("All files",".*")])
+	global image_dir
+
+	mypath = askopenfilename(filetypes = [("JPEG images", ".jpg"),("PNG images", "*.png"),("All files",".*")], initialdir = image_dir)
 	if not len(mypath):
 		return
-	load_background(imfull = mypath)
+	try:
+		load_background(imfull = mypath)
+	except:
+		print "Could not load image", mypath
+	image_dir = os.path.dirname(mypath)
 
 but_on = Button(f2, text = "Play", command = start_act, state = DISABLED, pady = 20)
 but_off = Button(f2, text = "Pause", command = stop_act, pady = 20)
