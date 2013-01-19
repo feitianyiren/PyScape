@@ -10,12 +10,12 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2013-01-18
+2013-01-19
 """
 
 from Tkinter import *
 from tkFileDialog import *
-import os, sys, random, math, csv
+import os, sys, random, math, csv, platform
 from random import random as r
 from os.path import basename
 from time import time
@@ -26,6 +26,8 @@ try:
 	from PIL import Image, ImageTk
 except:
 	Image, ImageTk = None, None
+	print "Python Imaging Library not found;"
+	print "background images disabled."
 
 random.seed()
 
@@ -40,7 +42,8 @@ master = Tk()
 pix = 800, 600		# canvas size
 cr = 20			# circle size
 ps_ext = '.pyscape'	# file extension for presets
-wpath = "sounds/fm3"	# inital path to WAV files
+wpath = os.path.join("sounds", "fm3")	# initial path to WAV files
+preset_path = "presets"		# initial path to presets
 if not os.path.isdir(wpath):
 	print "WAV sample directory %s not found!" % wpath
 	print "Please change the variable wpath to point to a directory"
@@ -187,7 +190,7 @@ def load_file(mypath = None):
 	par = []
 	update_title()
 	if not mypath:
-		mypath = askopenfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")])
+		mypath = askopenfilename(filetypes = [("PyScape preset", ps_ext),("All files",".*")], initialdir = preset_path)
 		if not len(mypath):
 			return
 	load_background(f = mypath)
@@ -196,8 +199,12 @@ def load_file(mypath = None):
 			wr = csv.reader(csvfile)
 			for row in wr:
 				act = (row[3] == 'True')
+				fname = row[4]
+				if platform.system() == "Windows" and '/' in fname:
+					fname = fname.split('/')
+					fname = os.path.join(fname)
 				par.append(Source(
-				int(row[0]), float(row[1]), float(row[2]), row[4], active = act,
+				int(row[0]), float(row[1]), float(row[2]), fname, active = act,
 				animated = getcol(row, 5), mod_amp = getcol(row, 6), offset = getcol_float(row, 7),
 				looping = getcol(row, 8, z = True)
 				))
