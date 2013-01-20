@@ -102,6 +102,7 @@ def load_background(f = None, imfull = None):
 		("sea.pyscape",        "Cabo_Espichel,_Portugal,_2012-08-18,_DD_08_800x600.jpg"),
 		("water.pyscape",      "Elakala_Waterfalls_pub5_-_West_Virginia_-_ForestWander_800x600.jpg"),
 		("explosions.pyscape", "USAF_EOD_explosion_800x600.jpg"),
+		("beach.pyscape",      "Anse_Source_d_Argent_2-La_Digue_800x600.jpg"),
 	)
 	if Image == None:
 		return
