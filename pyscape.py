@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2013-01-19
+2013-01-22
 """
 
 from Tkinter import *
@@ -48,6 +48,15 @@ preset_path = "presets"		# initial path to presets
 image_path = "backgrounds"	# initial path to background images
 global_dir = "/usr/share/pyscape"	# system global directory (not needed)
 use_global = False		# look in current directory or shared directory?
+
+sleep_time = 30		# minutes until fadeout and suspend when the time is active
+
+# user-level command to suspend the system:
+#  (define as an empty string if you do not want the system to suspend automatically)
+suspend_command = """dbus-send --system --print-reply \
+    --dest="org.freedesktop.UPower" \
+    /org/freedesktop/UPower \
+    org.freedesktop.UPower.Suspend"""
 
 if os.path.isdir(global_dir):
 	wpath = os.path.join(global_dir, wpath)
@@ -429,13 +438,28 @@ def select_background():
 		)
 	image_dir = os.path.dirname(mypath)
 
+sleep_timer = False
+off_time = 0
+def toggle_timer():
+	"Turn the sleep timer on and off"
+	global sleep_timer, off_time
+
+	sleep_timer = not sleep_timer
+	if sleep_timer:
+		off_time = time() + 60 * sleep_time
+	else:
+		off_time = 0
+		contextlistener.gain = 1.
+
 but_on = Button(f2, text = "Play", command = start_act, state = DISABLED, pady = 20)
 but_off = Button(f2, text = "Pause", command = stop_act, pady = 20)
 but_back = Button(f2, text = "Change wallpaper", command = select_background, pady = 20)
+but_timer = Button(f2, text = "Timer (off)", command = toggle_timer, pady = 20)
 
-but_back.pack(side = BOTTOM, fill = X)
-but_off.pack(side = BOTTOM, fill = X, pady = 20)
-but_on.pack(side = BOTTOM, fill = X)
+but_timer.pack(side = BOTTOM, fill = X)
+but_back.pack(side = BOTTOM, fill = X, pady = 10)
+but_off.pack(side = BOTTOM, fill = X)
+but_on.pack(side = BOTTOM, fill = X, pady = 10)
 
 class Source():
 	"A sound source"
@@ -604,6 +628,27 @@ else:
 
 def update_all():
 	"Move (or otherwise update) all sound sources regularly"
+	global sleep_timer
+
+	t = ''
+	if sleep_timer:
+		dofftime = off_time - time()
+		t = "Timer (%u min)" % int(dofftime/60.+.5)
+		if dofftime < 60:
+			contextlistener.gain = (dofftime / 60.)**2
+		if dofftime < 1:
+			stop_act()
+			contextlistener.gain = 1.
+			t = "Timer (stopped)"
+			sleep_timer = False
+			if suspend_command:
+				os.system(suspend_command)
+	else:
+		if not off_time:
+			t = "Timer (off)"
+	if t:
+		but_timer.config(text = t)
+
 	is_solo = False
 	for p in par:
 		if p.solo:
