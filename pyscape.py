@@ -49,7 +49,7 @@ image_path = "backgrounds"	# initial path to background images
 global_dir = "/usr/share/pyscape"	# system global directory (not needed)
 use_global = False		# look in current directory or shared directory?
 
-sleep_time = 30		# minutes until fadeout and suspend when the time is active
+sleep_time = 30		# minutes until fadeout and suspend when the timer is active
 
 # user-level command to suspend the system:
 #  (define as an empty string if you do not want the system to suspend automatically)
@@ -112,6 +112,7 @@ def load_background(f = None, imfull = None):
 		("water.pyscape",      "Elakala_Waterfalls_pub5_-_West_Virginia_-_ForestWander_800x600.jpg"),
 		("explosions.pyscape", "USAF_EOD_explosion_800x600.jpg"),
 		("beach.pyscape",      "Anse_Source_d_Argent_2-La_Digue_800x600.jpg"),
+		("rain.pyscape",       "Flickr - Rainbirder - Square-tailed Black Bulbul ( Hypsipetes ganeesa humii) in the rain_800x600.jpg"),
 	)
 	if Image == None:
 		return
