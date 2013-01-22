@@ -15,8 +15,8 @@
 <h1>PyScape</h1>
 <h2>A soundscape generator in Python/Tk</h2>
 
-<a href="media/pyscape.png"><img src="media/pyscape.png" alt="screenshot" width="400" height="300"></a>
-<smaller><i>The sea.pyscape preset</i></smaller><br>
+<a href="media/pyscape7.png"><img src="media/pyscape7.png" alt="screenshot" width="515" height="340"></a>
+<smaller><i>The rain preset</i></smaller><br>
 
 <audio controls>
   <source src="media/pyscape-sample.mp3">
@@ -34,7 +34,7 @@
 
 <h3>Downloads</h3>
 
-<p>Get it from the <a href="https://github.com/mdoege/PyScape">GitHub repo</a>, either by cloning the repo or by downloading the <a href="https://github.com/mdoege/PyScape/tags">v1.1 archive</a>. If you run Arch Linux, you can get the <tt><a href="https://aur.archlinux.org/packages/pyscape/">pyscape</a></tt> package from the AUR.</p>
+<p>Get it from the <a href="https://github.com/mdoege/PyScape">GitHub repo</a>, either by cloning the repo or by downloading the <a href="https://github.com/mdoege/PyScape/tags">latest archive</a>. If you run Arch Linux, you can get the <tt><a href="https://aur.archlinux.org/packages/pyscape/">pyscape</a></tt> package from the AUR.</p>
 
 <h3>Requirements</h3>
 
@@ -44,7 +44,7 @@
 
 <p>Run it as</p>
 
-<blockquote><tt>python2 pyscape.py [filename.pyscape]</tt></blockquote>
+<blockquote><tt>python2 pyscape.py [preset.pyscape]</tt></blockquote>
 
 <p>or via the included <tt>.desktop</tt> file.</p>
 
@@ -77,18 +77,20 @@
 
 <li>"Change wallpaper": Change the background image. Images larger than the canvas are automatically resized to fit. Python Imaging Library is needed for wallpapers.</li>
 
+<li>"Timer": This is a sleep timer that defaults to 30 minutes duration. During the final minute, the sound faded out slowly and then the computer is put into suspend mode (requires dbus). You disable a running timer by clicking on the timer button again.</li>
+
 <li>WAV files should ideally be mono. (You can convert stereo files with stereo2mono.sh, which needs sox.)</li>
 
-<li>Stereo files will also play in PyScape but will not be affected by panning.</li>
+<li>Stereo files will also play in PyScape but will not be affected by panning. (This OpenAL "feature" is used deliberately in the rain preset.)</li>
 
 </ul>
 
 <h3>Platforms</h3>
 
-<p>So far this has only been tested on Linux, but it should also work on other platforms supported by Python.</p>
+<p>So far this has only been tested on Linux, but it should also work on other platforms supported by Python, at least the Unix-like ones like FreeBSD. The code also contains a fix for Windows that converts forward slashes in path names to backward slashes, but again, this has not not been tested.</p>
 
-<a href="media/pyscape3.png"><img src="media/pyscape3.png" alt="screenshot" width="400" height="300"></a>
-<smaller><i>The jungle.pyscape preset</i></smaller><br>
+<a href="media/pyscape3.png"><img src="media/pyscape3.png" alt="screenshot" width="515" height="340"></a>
+<smaller><i>The jungle preset</i></smaller><br>
 
 <h3>License</h3>
 
@@ -102,8 +104,8 @@
 
 <p><a href="mailto:mdoege@compuserve.com">Send email</a></p>
 
-<a href="media/pyscape6.png"><img src="media/pyscape6.png" alt="screenshot" width="400" height="300"></a>
-<smaller><i>The beach.pyscape preset</i></smaller><br>
+<a href="media/pyscape6.png"><img src="media/pyscape6.png" alt="screenshot" width="515" height="340"></a>
+<smaller><i>The beach preset</i></smaller><br>
 
 </body>
 </html>
