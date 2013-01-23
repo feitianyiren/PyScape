@@ -536,6 +536,7 @@ class Source():
 			but_act.deselect()
 		s.update_color()
 		s.play_or_stop()
+		dirty()
 		
 	def play_or_stop(s):
 		"Play (if active) or stop the sound"
