@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2013-01-23
+2013-01-24
 """
 
 from Tkinter import *
@@ -72,6 +72,20 @@ sound_dir = wpath
 preset_dir = preset_path
 
 par = []
+
+dirty_flag = False	# has the user changed the currently loaded preset?
+
+def dirty():
+	"Set application state to dirty"
+	global dirty_flag
+	
+	dirty_flag = True
+
+def clean():
+	"Set application state to clean"
+	global dirty_flag
+	
+	dirty_flag = False
 
 def update_title():
 	"Update window title"
@@ -160,6 +174,7 @@ def tog_act():
 			p.active = not p.active
 			p.play_or_stop()
 			p.update_color()
+			dirty()
 
 but_act = Checkbutton(gitem, text = "Active", command = tog_act)
 but_act.grid(row=1, pady=10, sticky=W)
@@ -179,6 +194,7 @@ def tog_ani():
 	for p in par:
 		if p.selected:
 			p.animated = not p.animated
+			dirty()
 
 but_ani = Checkbutton(titem, text = "Animate", command = tog_ani)
 but_ani.grid(row=0, pady=10, sticky=W)
@@ -188,6 +204,7 @@ def tog_modamp():
 	for p in par:
 		if p.selected:
 			p.mod_amp = not p.mod_amp
+			dirty()
 
 but_modamp = Checkbutton(titem, text = "Modulate amplitude", command = tog_modamp)
 but_modamp.grid(row=1, pady=10, sticky=W)
@@ -197,6 +214,7 @@ def tog_trigger():
 	for p in par:
 		if p.selected:
 			p.source.looping = not p.source.looping
+			dirty()
 			if p.source.looping:
 				p.source.play()
 			else:
@@ -219,6 +237,7 @@ def save_file():
 		if imfullpath:
 			wr.writerow(("background", imfullpath))
 	preset_dir = os.path.dirname(mypath)
+	clean()
 
 def getcol(r, n, z = False):
 	"Attempt to read boolean from file"
@@ -238,6 +257,9 @@ def load_file(mypath = None):
 	"Load preset"
 	global par, preset_dir
 
+	if not mypath and dirty_flag:
+		if not tkMessageBox.askokcancel("Load preset", "You have unsaved changes.\nProceed?"):
+			return
 	if not mypath:
 		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_dir)
 		if not len(mypath):
@@ -293,6 +315,7 @@ def load_file(mypath = None):
 		par[0].sel()
 	update_title()
 	preset_dir = os.path.dirname(mypath)
+	clean()
 
 def sort_all():
 	"Arrange sources on screen by number"
@@ -308,6 +331,13 @@ def load_dir(mypath = None):
 	"Open directory with sound files"
 	global par, sound_dir
 
+	if not mypath and dirty_flag:
+		if not tkMessageBox.askokcancel("Load sound directory", "You have unsaved changes.\nProceed?"):
+			return
+	if not mypath:
+		mypath = askdirectory(initialdir = sound_dir)
+		if not len(mypath):
+			return
 	if par:
 		for p in par:
 			n = p.n
@@ -317,10 +347,6 @@ def load_dir(mypath = None):
 			w.delete("T%u" % n)
 	par = []
 	update_title()
-	if not mypath:
-		mypath = askdirectory(initialdir = sound_dir)
-		if not len(mypath):
-			return
 	try:
 		fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
 	except:
@@ -344,6 +370,7 @@ def load_dir(mypath = None):
 		)
 	update_title()
 	sound_dir = mypath
+	clean()
 
 def rm_inact():
 	"Delete all currently inactive sounds"
@@ -390,6 +417,7 @@ def load_sounds(mypath = None):
 		n += 1
 	update_title()
 	sound_dir = os.path.dirname(mypath[0])
+	dirty()
 
 Button(f1, text = "Save preset", command = save_file).pack(side = RIGHT)
 Button(f1, text = "Load preset", command = load_file).pack(side = RIGHT)
@@ -438,6 +466,7 @@ def select_background():
 			"Could not load image %s" % mypath
 		)
 	image_dir = os.path.dirname(mypath)
+	dirty()
 
 sleep_timer = False
 off_time = 0
@@ -539,6 +568,7 @@ class Source():
 		"Source has been dragged by the mouse"
 		x, y = event.x, event.y
 		s.moveto(x, y)
+		dirty()
 		
 	def moveto(s, x, y):
 		"Move source to new position and update"
