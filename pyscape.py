@@ -238,6 +238,10 @@ def load_file(mypath = None):
 	"Load preset"
 	global par, preset_dir
 
+	if not mypath:
+		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_dir)
+		if not len(mypath):
+			return
 	for p in par:
 		n = p.n
 		p.active = False
@@ -246,10 +250,6 @@ def load_file(mypath = None):
 		w.delete("T%u" % n)
 	par = []
 	update_title()
-	if not mypath:
-		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_dir)
-		if not len(mypath):
-			return
 	load_background(f = mypath)
 	try:
 		with open(mypath, 'rb') as csvfile:
