@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2013-01-22
+2013-01-23
 """
 
 from Tkinter import *
@@ -629,21 +629,27 @@ else:
 
 def update_all():
 	"Move (or otherwise update) all sound sources regularly"
-	global sleep_timer
+	global sleep_timer, off_time
 
 	t = ''
 	if sleep_timer:
 		dofftime = off_time - time()
 		t = "Timer (%u min)" % int(dofftime/60.+.5)
-		if dofftime < 60:
-			contextlistener.gain = (dofftime / 60.)**2
-		if dofftime < 1:
+		if dofftime < 0:	# just in case the user suspends the system while the timer is running...
 			stop_act()
 			contextlistener.gain = 1.
-			t = "Timer (stopped)"
 			sleep_timer = False
-			if suspend_command:
-				os.system(suspend_command)
+			off_time = 0
+		else:
+			if dofftime < 60:
+				contextlistener.gain = (dofftime / 60.)**2.5
+			if dofftime < 3:
+				stop_act()
+				contextlistener.gain = 1.
+				t = "Timer (stopped)"
+				sleep_timer = False
+				if suspend_command:
+					os.system(suspend_command)
 	else:
 		if not off_time:
 			t = "Timer (off)"
