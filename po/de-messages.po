@@ -1,0 +1,171 @@
+# PyScape German messages
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: pyscape\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-24 01:58+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Martin Doege <mdoege@compuserve.com>\n"
+"Language: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: pyscape.py:97
+#, python-format
+msgid "Playing %s; use RMB to quit solo mode"
+msgstr "Spiele %s; rechte Maustaste drücken um Solomodus zu beenden"
+
+#: pyscape.py:101
+#, python-format
+msgid "%u of %u sources active (LMB=select/drag; MMB=toggle on/off; RMB=solo)"
+msgstr "%u von %u Quellen aktiv (LMT=auswählen/verschieben; MMT=ein- und ausschalten; RMT=Solo)"
+
+#: pyscape.py:163
+msgid "Item properties"
+msgstr "Eigenschaften"
+
+#: pyscape.py:166
+msgid "Item time behavior"
+msgstr "Zeitverhalten"
+
+#: pyscape.py:171
+msgid "(no selection)"
+msgstr "(keine Auswahl)"
+
+#: pyscape.py:182
+msgid "Active"
+msgstr "Aktiviert"
+
+#: pyscape.py:191
+msgid "Solo"
+msgstr "Solo"
+
+#: pyscape.py:202
+msgid "Animate"
+msgstr "Bewegen"
+
+#: pyscape.py:212
+msgid "Modulate amplitude"
+msgstr "Lautstärke verändern"
+
+#: pyscape.py:226
+msgid "Trigger"
+msgstr "Zufällig auslösen"
+
+#: pyscape.py:233 pyscape.py:267
+msgid "PyScape presets"
+msgstr "PyScape Presets"
+
+#: pyscape.py:233 pyscape.py:267 pyscape.py:398 pyscape.py:461
+msgid "All files"
+msgstr "Alle Dateien"
+
+#: pyscape.py:264 pyscape.py:288 pyscape.py:307 pyscape.py:312 pyscape.py:426
+msgid "Load preset"
+msgstr "Preset laden"
+
+#: pyscape.py:264 pyscape.py:338
+msgid ""
+"You have unsaved changes.\n"
+"Proceed?"
+msgstr "Ungesicherte Änderungen–\nweitermachen?"
+
+#: pyscape.py:289
+#, python-format
+msgid "Could not load background image %s"
+msgstr "Konnte das Bild nicht laden: %s"
+
+#: pyscape.py:308
+#, python-format
+msgid "Could not load sound file %s"
+msgstr "Konnte die Tondatei nicht laden: %s"
+
+#: pyscape.py:313
+#, python-format
+msgid "Could not read preset file %s"
+msgstr "Konnte das Preset nicht lesen: %s"
+
+#: pyscape.py:338 pyscape.py:357 pyscape.py:371 pyscape.py:428
+msgid "Load sound directory"
+msgstr "Tonverzeichnis laden"
+
+#: pyscape.py:358
+#, python-format
+msgid "Directory %s could not be read"
+msgstr "Verzeichnis %s nicht lesbar"
+
+#: pyscape.py:372
+#, python-format
+msgid "No sounds found in directory %s"
+msgstr "Keine Töne im Verzeichnis %s"
+
+#: pyscape.py:398
+msgid "WAV audio files"
+msgstr "WAV Tondateien"
+
+#: pyscape.py:414 pyscape.py:429
+msgid "Add sounds"
+msgstr "Töne hinzufügen"
+
+#: pyscape.py:415
+#, python-format
+msgid ""
+"There was a problem with the sound file %s\n"
+"Formats other than WAV probably will not work."
+msgstr "Es gab ein Problem mit der Datei %s\nBitte WAV-Format benutzen!"
+
+#: pyscape.py:425
+msgid "Save preset"
+msgstr "Preset speichern"
+
+#: pyscape.py:430
+msgid "Remove unused sounds"
+msgstr "Ungenutzte entfernen"
+
+#: pyscape.py:431
+msgid "Arrange sounds"
+msgstr "Anordnen"
+
+#: pyscape.py:461
+msgid "JPEG images"
+msgstr "JPEG-Bilder"
+
+#: pyscape.py:461
+msgid "PNG images"
+msgstr "PNG-Bilder"
+
+#: pyscape.py:468 pyscape.py:489
+msgid "Change wallpaper"
+msgstr "Hintergrund ändern"
+
+#: pyscape.py:469
+#, python-format
+msgid "Could not load image %s"
+msgstr "Konnte das Bild %s nicht laden"
+
+#: pyscape.py:487
+msgid "Play"
+msgstr "Abspielen"
+
+#: pyscape.py:488
+msgid "Pause"
+msgstr "Pausieren"
+
+#: pyscape.py:490 pyscape.py:689
+msgid "Timer (off)"
+msgstr "Zeitschaltuhr (aus)"
+
+#: pyscape.py:653
+msgid "Loading"
+msgstr "Lade"
+
+#: pyscape.py:671
+#, python-format
+msgid "Timer (%u min)"
+msgstr "Zeitschaltuhr (%u Min.)"
+
+#: pyscape.py:683
+msgid "Timer (stopped)"
+msgstr "Zeitschaltuhr (gestoppt)"

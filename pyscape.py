@@ -13,6 +13,7 @@ Martin C. Doege
 2013-01-24
 """
 
+import gettext
 from Tkinter import *
 import tkMessageBox
 from tkFileDialog import *
@@ -63,6 +64,9 @@ if os.path.isdir(global_dir):
 	preset_path = os.path.join(global_dir, preset_path)
 	image_path = os.path.join(global_dir, image_path)
 	use_global = True
+	gettext.install("pyscape", localedir = "/usr/share/locale", unicode = True)
+else:
+	gettext.install("pyscape", localedir = "mo", unicode = True)
 
 ############################################################################
 
@@ -91,11 +95,11 @@ def update_title():
 	"Update window title"
 	for p in par:
 		if p.solo:
-			master.title("Playing %s; use RMB to quit solo mode" % basename(p.fn))
+			master.title(_("Playing %s; use RMB to quit solo mode") % basename(p.fn))
 			return
 	a = len(par)
 	b = len([x for x in par if x.active])
-	master.title("%u of %u sources active (LMB=select/drag; MMB=toggle on/off; RMB=solo)" % (b, a))
+	master.title(_("%u of %u sources active (LMB=select/drag; MMB=toggle on/off; RMB=solo)") % (b, a))
 
 f1 = Frame(master)
 f1.pack(side = LEFT)
@@ -157,15 +161,15 @@ load_background()
 
 f2 = Frame(master)
 f2.pack(side = RIGHT, fill = BOTH)
-gitem = LabelFrame(f2, text="Item properties", padx=5, pady=5)
+gitem = LabelFrame(f2, text=_("Item properties"), padx=5, pady=5)
 gitem.pack(side = TOP, padx=10, pady=10, fill = BOTH)
 
-titem = LabelFrame(f2, text="Item time behavior", padx=5, pady=5)
+titem = LabelFrame(f2, text=_("Item time behavior"), padx=5, pady=5)
 titem.pack(side = TOP, padx=10, pady=10, fill = BOTH)
 lab = Entry(gitem)
 lab.grid(row=0, pady=10)
 lab.delete(0, END)
-lab.insert(0, "(no selection)")
+lab.insert(0, _("(no selection)"))
 
 def tog_act():
 	"Toggle sound active flag"
@@ -176,7 +180,7 @@ def tog_act():
 			p.update_color()
 			dirty()
 
-but_act = Checkbutton(gitem, text = "Active", command = tog_act)
+but_act = Checkbutton(gitem, text = _("Active"), command = tog_act)
 but_act.grid(row=1, pady=10, sticky=W)
 
 def tog_sol():
@@ -185,7 +189,7 @@ def tog_sol():
 		if p.selected:
 			p.makesolo()
 
-but_sol = Checkbutton(gitem, text = "Solo", command = tog_sol)
+but_sol = Checkbutton(gitem, text = _("Solo"), command = tog_sol)
 but_sol.grid(row=2, pady=10, sticky=W)
 
 do_ani = True
@@ -196,7 +200,7 @@ def tog_ani():
 			p.animated = not p.animated
 			dirty()
 
-but_ani = Checkbutton(titem, text = "Animate", command = tog_ani)
+but_ani = Checkbutton(titem, text = _("Animate"), command = tog_ani)
 but_ani.grid(row=0, pady=10, sticky=W)
 
 def tog_modamp():
@@ -206,7 +210,7 @@ def tog_modamp():
 			p.mod_amp = not p.mod_amp
 			dirty()
 
-but_modamp = Checkbutton(titem, text = "Modulate amplitude", command = tog_modamp)
+but_modamp = Checkbutton(titem, text = _("Modulate amplitude"), command = tog_modamp)
 but_modamp.grid(row=1, pady=10, sticky=W)
 
 def tog_trigger():
@@ -220,14 +224,14 @@ def tog_trigger():
 			else:
 				p.source.stop()
 
-but_trig = Checkbutton(titem, text = "Trigger", command = tog_trigger)
+but_trig = Checkbutton(titem, text = _("Trigger"), command = tog_trigger)
 but_trig.grid(row=2, pady=10, sticky=W)
 
 def save_file():
 	"Save as preset"
 	global preset_dir
 
-	mypath = asksaveasfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], defaultextension = ps_ext, initialdir = preset_dir)
+	mypath = asksaveasfilename(filetypes = [(_("PyScape presets"), ps_ext),(_("All files"),".*")], defaultextension = ps_ext, initialdir = preset_dir)
 	if not len(mypath):
 		return
 	with open(mypath, 'wb') as csvfile:
@@ -258,10 +262,10 @@ def load_file(mypath = None):
 	global par, preset_dir
 
 	if not mypath and dirty_flag:
-		if not tkMessageBox.askokcancel("Load preset", "You have unsaved changes.\nProceed?"):
+		if not tkMessageBox.askokcancel(_("Load preset"), _("You have unsaved changes.\nProceed?")):
 			return
 	if not mypath:
-		mypath = askopenfilename(filetypes = [("PyScape presets", ps_ext),("All files",".*")], initialdir = preset_dir)
+		mypath = askopenfilename(filetypes = [(_("PyScape presets"), ps_ext),(_("All files"),".*")], initialdir = preset_dir)
 		if not len(mypath):
 			return
 	for p in par:
@@ -282,8 +286,8 @@ def load_file(mypath = None):
 						load_background(imfull = row[1])
 					except:
 						tkMessageBox.showwarning(
-							"Load preset",
-							"Could not load background image %s" % row[1]
+							_("Load preset"),
+							_("Could not load background image %s") % row[1]
 						)
 					continue
 				act = (row[3] == 'True')
@@ -301,13 +305,13 @@ def load_file(mypath = None):
 					))
 				except:
 					tkMessageBox.showwarning(
-						"Load preset",
-						"Could not load sound file %s" % fname
+						_("Load preset"),
+						_("Could not load sound file %s") % fname
 					)
 	except:
 		tkMessageBox.showerror(
-			"Load preset",
-			"Could not read preset file %s" % mypath
+			_("Load preset"),
+			_("Could not read preset file %s") % mypath
 		)
 		return
 	start_act()
@@ -332,7 +336,7 @@ def load_dir(mypath = None):
 	global par, sound_dir
 
 	if not mypath and dirty_flag:
-		if not tkMessageBox.askokcancel("Load sound directory", "You have unsaved changes.\nProceed?"):
+		if not tkMessageBox.askokcancel(_("Load sound directory"), _("You have unsaved changes.\nProceed?")):
 			return
 	if not mypath:
 		mypath = askdirectory(initialdir = sound_dir)
@@ -351,8 +355,8 @@ def load_dir(mypath = None):
 		fn = [x for x in os.listdir(mypath) if (x[0] != '.' and ".wav" in x)]
 	except:
 		tkMessageBox.showwarning(
-			"Load sound directory",
-			"Directory %s could not be read" % mypath
+			_("Load sound directory"),
+			_("Directory %s could not be read") % mypath
 		)
 		return
 	fn.sort()
@@ -365,8 +369,8 @@ def load_dir(mypath = None):
 		par[0].sel()
 	else:
 		tkMessageBox.showinfo(
-			"Load sound directory",
-			"No sounds found in directory %s" % mypath
+			_("Load sound directory"),
+			_("No sounds found in directory %s") % mypath
 		)
 	update_title()
 	sound_dir = mypath
@@ -392,7 +396,7 @@ def load_sounds(mypath = None):
 	global sound_dir
 
 	if not mypath:
-		mypath = askopenfilenames(filetypes = [("WAV audio files", ".wav"),("All files",".*")], initialdir = sound_dir)
+		mypath = askopenfilenames(filetypes = [(_("WAV audio files"), ".wav"),(_("All files"),".*")], initialdir = sound_dir)
 		if not len(mypath):
 			return
 	n = 0
@@ -408,8 +412,8 @@ def load_sounds(mypath = None):
 			par.append(Source(n, xpos, .5, f, active = True))
 		except:
 			tkMessageBox.showerror(
-				"Add sounds",
-				"There was a problem with the sound file %s\nFormats other than WAV probably will not work." % f
+				_("Add sounds"),
+				_("There was a problem with the sound file %s\nFormats other than WAV probably will not work.") % f
 			)
 		w.tag_raise("C%u" % n)
 		w.tag_raise("T%u" % n)
@@ -419,13 +423,13 @@ def load_sounds(mypath = None):
 	sound_dir = os.path.dirname(mypath[0])
 	dirty()
 
-Button(f1, text = "Save preset", command = save_file).pack(side = RIGHT)
-Button(f1, text = "Load preset", command = load_file).pack(side = RIGHT)
+Button(f1, text = _("Save preset"), command = save_file).pack(side = RIGHT)
+Button(f1, text = _("Load preset"), command = load_file).pack(side = RIGHT)
 
-Button(f1, text = "Load sound directory", command = load_dir).pack(side = LEFT)
-Button(f1, text = "Add sounds", command = load_sounds).pack(side = LEFT)
-Button(f1, text = "Remove unused sounds", command = rm_inact).pack(side = LEFT)
-Button(f1, text = "Arrange sounds", command = sort_all).pack(side = LEFT)
+Button(f1, text = _("Load sound directory"), command = load_dir).pack(side = LEFT)
+Button(f1, text = _("Add sounds"), command = load_sounds).pack(side = LEFT)
+Button(f1, text = _("Remove unused sounds"), command = rm_inact).pack(side = LEFT)
+Button(f1, text = _("Arrange sounds"), command = sort_all).pack(side = LEFT)
 
 def start_act():
 	"Start performance"
@@ -455,15 +459,15 @@ def select_background():
 	"Select a new background image"
 	global image_dir
 
-	mypath = askopenfilename(filetypes = [("JPEG images", ".jpg"),("PNG images", "*.png"),("All files",".*")], initialdir = image_dir)
+	mypath = askopenfilename(filetypes = [(_("JPEG images"), ".jpg"),(_("PNG images"), "*.png"),(_("All files"),".*")], initialdir = image_dir)
 	if not len(mypath):
 		return
 	try:
 		load_background(imfull = mypath)
 	except:
 		tkMessageBox.showerror(
-			"Change wallpaper",
-			"Could not load image %s" % mypath
+			_("Change wallpaper"),
+			_("Could not load image %s") % mypath
 		)
 	image_dir = os.path.dirname(mypath)
 	dirty()
@@ -481,10 +485,10 @@ def toggle_timer():
 		off_time = 0
 		contextlistener.gain = 1.
 
-but_on = Button(f2, text = "Play", command = start_act, state = DISABLED, pady = 20)
-but_off = Button(f2, text = "Pause", command = stop_act, pady = 20)
-but_back = Button(f2, text = "Change wallpaper", command = select_background, pady = 20)
-but_timer = Button(f2, text = "Timer (off)", command = toggle_timer, pady = 20)
+but_on = Button(f2, text = _("Play"), command = start_act, state = DISABLED, pady = 20)
+but_off = Button(f2, text = _("Pause"), command = stop_act, pady = 20)
+but_back = Button(f2, text = _("Change wallpaper"), command = select_background, pady = 20)
+but_timer = Button(f2, text = _("Timer (off)"), command = toggle_timer, pady = 20)
 
 but_timer.pack(side = BOTTOM, fill = X)
 but_back.pack(side = BOTTOM, fill = X, pady = 10)
@@ -536,7 +540,8 @@ class Source():
 			but_act.deselect()
 		s.update_color()
 		s.play_or_stop()
-		dirty()
+		if event:
+			dirty()
 		
 	def play_or_stop(s):
 		"Play (if active) or stop the sound"
@@ -647,7 +652,7 @@ class Source():
 demos = ((10, 11, 13, 14, 15, 16), (3, 7), (6, 11), (7, 16), (4, 10, 17))
 
 if len(sys.argv) > 1:
-	print "Loading", sys.argv[1]
+	print _("Loading"), sys.argv[1]
 	load_file(mypath = sys.argv[1])
 else:
 	load_dir(mypath = wpath)
@@ -665,7 +670,7 @@ def update_all():
 	t = ''
 	if sleep_timer:
 		dofftime = off_time - time()
-		t = "Timer (%u min)" % int(dofftime/60.+.5)
+		t = _("Timer (%u min)") % int(dofftime/60.+.5)
 		if dofftime < 0:	# just in case the user suspends the system while the timer is running...
 			stop_act()
 			contextlistener.gain = 1.
@@ -677,13 +682,13 @@ def update_all():
 			if dofftime < 3:
 				stop_act()
 				contextlistener.gain = 1.
-				t = "Timer (stopped)"
+				t = _("Timer (stopped)")
 				sleep_timer = False
 				if suspend_command:
 					os.system(suspend_command)
 	else:
 		if not off_time:
-			t = "Timer (off)"
+			t = _("Timer (off)")
 	if t:
 		but_timer.config(text = t)
 
