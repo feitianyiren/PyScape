@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2013-01-24
+2014-07-17
 """
 
 import gettext
@@ -54,10 +54,7 @@ sleep_time = 30		# minutes until fadeout and suspend when the timer is active
 
 # user-level command to suspend the system:
 #  (define as an empty string if you do not want the system to suspend automatically)
-suspend_command = """dbus-send --system --print-reply \
-    --dest="org.freedesktop.UPower" \
-    /org/freedesktop/UPower \
-    org.freedesktop.UPower.Suspend"""
+suspend_command = "systemctl suspend"
 
 if os.path.isdir(global_dir):
 	wpath = os.path.join(global_dir, wpath)
