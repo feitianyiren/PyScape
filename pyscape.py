@@ -10,7 +10,7 @@ The sound files need to be mono, otherwise panning won't work!
 Martin C. Doege
 <mdoege@compuserve.com>
 
-2014-07-17
+2014-12-16
 """
 
 import gettext
@@ -128,6 +128,8 @@ def load_background(f = None, imfull = None):
 		("explosions.pyscape", "USAF_EOD_explosion_800x600.jpg"),
 		("beach.pyscape",      "Anse_Source_d_Argent_2-La_Digue_800x600.jpg"),
 		("rain.pyscape",       "Flickr - Rainbirder - Square-tailed Black Bulbul ( Hypsipetes ganeesa humii) in the rain_800x600.jpg"),
+		("village.pyscape",    "Rigi_Kulm_cows_2012_800x600.jpg"),
+		("plane.pyscape",      "Thai_Airways_Economy_Class_Cabin_800x600.jpg"),
 	)
 	if Image == None:
 		return
