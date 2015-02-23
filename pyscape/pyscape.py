@@ -26,6 +26,7 @@ import platform
 from random import random as r
 from os.path import basename
 from time import time
+from pkg_resources import resource_filename
 
 import openal
 
@@ -240,9 +241,10 @@ class Main():
         self.pix = 800, 600		# canvas size
         self.cr = 20			# circle size
         self.ps_ext = '.pyscape'  # file extension for presets
-        self.wpath = os.path.join("sounds", "fm3")  # initial path to WAV files
-        self.preset_path = "presets"		# initial path to presets
-        self.image_path = "backgrounds"  # initial path to background images
+        # resource_filename insists on '/', don't change to os.path.join
+        self.wpath = resource_filename(__name__, "sounds/fm3")        # initial path to WAV files
+        self.preset_path = resource_filename(__name__, "presets")     # initial path to presets
+        self.image_path = resource_filename(__name__, "backgrounds")  # initial path to background images
         # system global directory (not needed)
         self.global_dir = "/usr/share/pyscape"
         # look in current directory or shared directory?
@@ -412,7 +414,7 @@ class Main():
             return
         i = "Buddha_in_shilparamam_800x600.jpg"
         if f:
-            for a, b in images:
+            for a, b in self.images:
                 if a in f:
                     i = b
         im = os.path.join(self.image_path, i)
