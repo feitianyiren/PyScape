@@ -262,10 +262,12 @@ class Main():
             self.preset_path = os.path.join(self.global_dir, self.preset_path)
             self.image_path = os.path.join(self.global_dir, self.image_path)
             self.use_global = True
+
+        if not os.path.isdir("../mo"):
             gettext.install(
                 "pyscape", localedir="/usr/share/locale", unicode=True)
         else:
-            gettext.install("pyscape", localedir="mo", unicode=True)
+            gettext.install("pyscape", localedir="../mo", unicode=True)
 
         #######################################################################
 
