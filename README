@@ -1,9 +1,17 @@
 A simple Python soundscape creation tool
 ========================================
 
+Install from within the PyScape directory with
+
+  pip install --user .
+
+or
+
+  sudo pip install .
+
 Run as:
 
-  python2 pyscape.py [filename.pyscape]
+  pyscape [filename.pyscape]
 
 * Defaults to the included FM3 Buddha Machine loops, but you can change that either from the GUI (click "Load sounds" and select a directory with WAV files) or in the source ("wpath").
 
@@ -18,4 +26,3 @@ PyScape requires the OpenAL and FreeALUT libraries. If the Python Imaging Librar
 License:
 
 While the program itself is distributed under the GPL, the sounds and images have various CC licenses, sometimes forbidding commercial uses. Please consult the README files in the respective subdirectories for details.
-
