@@ -746,7 +746,7 @@ class Main():
                     (.5 + .25 * (1 + math.sin(time() / 2 - p.offset)))**2
             else:
                 p.source.gain = p.gain_pure
-            if not p.source.looping and p.active and not stop_it:
+            if not p.source.looping and p.active and not self.stop_it:
                 if p.source.state != openal._al.PLAYING:
                     if random.expovariate(1) > 4 and (not is_solo or p.solo):
                         pitch = random.normalvariate(1., .3)
