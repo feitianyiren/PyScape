@@ -515,6 +515,10 @@ class Main():
             with open(mypath, 'rb') as csvfile:
                 wr = csv.reader(csvfile)
                 for row in wr:
+                    # Default presets contain relative paths which won't make
+                    # sense unless turned absolute
+                    if (len(row) > 4) and (not os.path.isabs(row[4])):
+                        row[4] = resource_filename(__name__, row[4])
                     if row[0] == "background":
                         try:
                             self.load_background(imfull=row[1])
