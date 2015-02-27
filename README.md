@@ -14,9 +14,13 @@ Run as:
     pyscape [filename.pyscape]
 
 Optionally, you need the Python Imaging Library installed for background images to be displayed.
-In ubuntu, this can be accomplished by
+In Ubuntu, this can be accomplished by
 
     sudo apt-get install python-imaging python-imaging-tk
+
+For Arch Linux, a [PKGBUILD](https://aur.archlinux.org/packages/pyscape/) is available.
+
+Other notes:
 
 *   Defaults to the included FM3 Buddha Machine loops, but you can change that either from the GUI (click "Load sounds" and select a directory with WAV files) or in the source ("wpath").
 
