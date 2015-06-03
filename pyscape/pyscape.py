@@ -673,7 +673,7 @@ class Main():
         for p in self.par:
             p.play_or_stop()
 
-    def stop_act():
+    def stop_act(self):
         """Pause performance"""
         self.stop_it = True
         self.do_ani = False
@@ -716,7 +716,7 @@ class Main():
             # just in case the user suspends the system while the timer is
             # running...
             if dofftime < 0:
-                self.stop_act()
+                self.stop_act(self)
                 self.contextlistener.gain = 1.
                 self.sleep_timer = False
                 self.off_time = 0
@@ -724,7 +724,7 @@ class Main():
                 if dofftime < 60:
                     self.contextlistener.gain = (dofftime / 60.)**2.5
                 if dofftime < 3:
-                    self.stop_act()
+                    self.stop_act(self)
                     self.contextlistener.gain = 1.
                     t = _("Timer (stopped)")
                     self.sleep_timer = False
