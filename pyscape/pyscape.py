@@ -251,7 +251,9 @@ class Main():
         self.use_global = False
 
         # minutes until fadeout and suspend when the timer is active
-        self.sleep_time = 30
+        self.sleep_times = [3, 5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 300, ]
+        self.sleep_time_index = 0
+        self.sleep_time = self.sleep_times[0]
 
         # user-level command to suspend the system:
         #  (define as an empty string if you do not want the system to suspend automatically)
@@ -700,12 +702,29 @@ class Main():
 
     def toggle_timer(self):
         """Turn the sleep timer on and off"""
-        self.sleep_timer = not self.sleep_timer
+        if not self.sleep_timer:
+            self.sleep_timer = True
+            self.sleep_time_index = 0
+        elif self.less_than_minute():
+            # in case the last click was before more than a minute we'll just let
+            # the timer to be reset to current value couple lines bellow
+            if self.sleep_time_index == len(self.sleep_times) - 1:
+                self.sleep_timer = False
+                self.sleep_time_index = 0
+            else:
+                self.sleep_timer = True
+                self.sleep_time_index += 1
+
         if self.sleep_timer:
+            self.sleep_time = self.sleep_times[self.sleep_time_index]
             self.off_time = time() + 60 * self.sleep_time
         else:
             self.off_time = 0
             self.contextlistener.gain = 1.
+
+    def less_than_minute(self):
+        """Tell us whether the last click on the timer button was before less than a minute"""
+        return (time() + 60 * self.sleep_time) - self.off_time < 60
 
     def update_all(self):
         """Move (or otherwise update) all sound sources regularly"""
