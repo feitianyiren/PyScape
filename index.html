@@ -83,7 +83,7 @@
 
 <li>"Change wallpaper": Change the background image. Images larger than the canvas are automatically resized to fit. Python Imaging Library is needed for wallpapers.</li>
 
-<li>"Timer": This is a sleep timer, the duration of which can be set between 3 and 300 minutes by clicking the button repeatedly. During the final minute, the sound fades out slowly and then the computer is put into suspend mode (requires dbus). You can disable a running timer by clicking on the timer button again.</li>
+<li>"Timer": This is a sleep timer, the duration of which can be set between 3 and 300 minutes by clicking the button repeatedly. During the final minute, the sound fades out slowly and then the computer is put into suspend mode (should work on Linux systems using systemd; for other systems you can change the <tt>self.suspend_command</tt> variable to an appropriate command). You can disable a running timer by clicking on the timer button again.</li>
 
 <li>WAV files should ideally be mono. (You can convert stereo files with stereo2mono.sh, which needs sox.)</li>
 
