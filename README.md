@@ -2,6 +2,7 @@ A simple Python soundscape creation tool
 ========================================
 
 ![screenshot](https://github.com/mdoege/PyScape/raw/master/pyscape.jpg "PyScape screenshot")
+![screenshot](https://github.com/mdoege/PyScape/raw/master/pyscape_usage.png "PyScape usage")
 
 Install from within the PyScape directory with
 
